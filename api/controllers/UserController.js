@@ -60,6 +60,36 @@ module.exports = {
         };
         User.find(req.body, callback);
     },
+     adminlogin: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.adminlogin(req.body, callback);
+    },
+    findApproved: function(req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.findApproved(req.body, callback);
+    },
+    deleteRejected: function(req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.deleteRejected(req.body, callback);
+    },
+    findAwaitingApproval: function(req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.findAwaitingApproval(req.body, callback);
+    },
+    findRejected: function(req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.findRejected(req.body, callback);
+    },
     findone: function(req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
