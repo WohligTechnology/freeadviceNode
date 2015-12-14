@@ -277,7 +277,7 @@ module.exports = {
                     } else {
                         callback({
                             value: false,
-                            comment:"Moderator is non-existent."
+                            comment: "Moderator is non-existent."
                         });
                         db.close();
                     }
