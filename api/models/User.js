@@ -251,6 +251,40 @@ module.exports = {
             }
         });
     },
+    isModerator: function (data, callback) {
+        sails.query(function (err, db) {
+            if (err) {
+                console.log(err);
+                callback({
+                    value: false
+                });
+            }
+            if (db) {
+                db.collection("user").find({
+                    _id: sails.ObjectID(data.moderator),
+                    accesslevel: "moderator"
+                }).toArray(function (err, data2) {
+                    if (err) {
+                        callback({
+                            value: false
+                        });
+                        db.close();
+                    } else if (data2 && data2[0]) {
+                        callback({
+                            value: true
+                        });
+                        db.close();
+                    } else {
+                        callback({
+                            value: false,
+                            comment:"Moderator is non-existent."
+                        });
+                        db.close();
+                    }
+                });
+            }
+        });
+    },
     //Findlimited
     findApproved: function (data, callback) {
         sails.query(function (err, db) {
