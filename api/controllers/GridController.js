@@ -22,6 +22,7 @@ module.exports = {
             }
 
             function user() {
+                console.log(req.body);
                 var print = function(data) {
                     res.json(data);
                 }
@@ -65,6 +66,12 @@ module.exports = {
             res.json(data);
         };
         Grid.generateData(req.body, callback);
+    },
+    generateDataByType: function(req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        Grid.generateDataByType(req.body, callback);
     },
     findone: function(req, res) {
         if (req.body) {

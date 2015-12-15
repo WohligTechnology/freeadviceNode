@@ -7,44 +7,58 @@
 
 module.exports = {
     save: function (data, callback) {
-        console.log("here");
+        
+        
+        
+
         sails.query(function (err, db) {
+            
+            console.log("Connection Open");
+            function closeDatabase(obj) {
+                
+                
+                db.on('close', function() {
+                    callback(obj);
+                    console.log("Connection Closed");
+                });
+                db.close();
+            };
+            
             if (err) {
                 console.log(err);
                 callback({
                     value: false
                 });
-            }
-            if (db) {
-
-                console.log("inside db");
+            } else if (db) {
+                console.log(data);
                 if (!data._id) {
+                    //                    console.log("in if");
                     data._id = sails.ObjectID();
                     db.collection('grid').insert(data, function (err, created) {
                         if (err) {
                             console.log(err);
-                            callback({
+                            closeDatabase({
                                 value: false,
                                 comment: "Error"
                             });
-                            db.close();
 
                         } else if (created) {
                             console.log("inside insert");
-                            callback({
+                            closeDatabase({
                                 value: true,
                                 id: data._id
                             });
-                            db.close();
+                           
                         } else {
-                            callback({
+                            closeDatabase({
                                 value: false,
                                 comment: "Not created"
                             });
-                            db.close();
+                            
                         }
                     });
                 } else {
+                    //                    console.log("in else");
                     var grid = sails.ObjectID(data._id);
                     delete data._id
                     db.collection('grid').update({
@@ -54,28 +68,24 @@ module.exports = {
                     }, function (err, updated) {
                         if (err) {
                             console.log(err);
-                            callback({
+                            closeDatabase({
                                 value: false,
                                 comment: "Error"
                             });
-                            db.close();
                         } else if (updated.result.nModified != 0 && updated.result.n != 0) {
-                            callback({
+                            closeDatabase({
                                 value: true
                             });
-                            db.close();
                         } else if (updated.result.nModified == 0 && updated.result.n != 0) {
-                            callback({
+                            closeDatabase({
                                 value: true,
                                 comment: "Data already updated"
                             });
-                            db.close();
                         } else {
-                            callback({
+                            closeDatabase({
                                 value: false,
                                 comment: "No data found"
                             });
-                            db.close();
                         }
                     });
                 }
@@ -113,76 +123,169 @@ module.exports = {
     },
     generateData: function (data, callback) {
         var type = [{
-            text: "0%",
+            name: "0%",
             min: 94,
             max: 106
         }, {
-            text: "10%",
-            min: 956,
+            name: "10%",
+            min: 95,
             max: 105
         }, {
-            text: "20%",
+            name: "20%",
+
             min: 96,
             max: 104
         }, {
-            text: "30%",
+            name: "30%",
             min: 97,
             max: 103
         }, {
-            text: "40%",
+            name: "40%",
             min: 98,
             max: 102
         }, {
-            text: "50%",
+            name: "50%",
             min: 99,
             max: 101
         }, {
-            text: "60%",
+            name: "60%",
             min: 100,
             max: 101
         }, {
-            text: "70%",
+            name: "70%",
             min: 93,
             max: 100
         }, {
-            text: "80%",
+            name: "80%",
             min: 100,
             max: 105
         }, {
-            text: "90%",
+            name: "90%",
             min: 92,
             max: 101
         }, {
-            text: "100%",
+            name: "100%",
             min: 91,
             max: 100
         }];
-        var i, j, k;
-        for (i = 0; i < type.length; i++) {
-            console.log(i);
-            for (j = 1; j <= 120; j++) {
-                for (k = 1; k <= 100; k++) {
-                    var grid = {
-                        tenure: j,
-                        path: k,
-                        value: Math.floor(Grid.generateRandom(type[i].max, type[i].min)),
-                        type: type[i].text
-                    };
-                    console.log(grid);
-                    Grid.save(grid, function (resp) {
-                        console.log("here");
-                        if (resp.value) {
-                            k++;
-                        }
+        var grid = {
+            tenure: data.tenure,
+            path: data.path,
+            value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
+            type: type[data.type].name
+        };
+        if (data.tenure == 1 && data.path == 1 && data.type == 0) {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    callback({
+                        value: true,
+                        comment: "Eureka!"
                     });
                 }
-            }
+            });
+        } else if (data.tenure == 1 && data.path == 1) {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    data.tenure = data.maxtenure;
+                    data.path = data.maxpath;
+                    data.type = data.type - 1;
+                    Grid.generateData(data, callback);
+                }
+            });
+        } else if (data.path == 1) {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    data.tenure = data.tenure - 1;
+                    data.path = data.maxpath;
+                    Grid.generateData(data, callback);
+                }
+            });
+        } else {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    data.path = data.path - 1;
+                    Grid.generateData(data, callback);
+                }
+            });
         }
-        if (i == type.length) {
-            callback({
-                value: true,
-                comment: "alldone"
-            })
+    },
+    generateDataByType: function (data, callback) {
+        var type = [{
+            name: "0%",
+            min: 94,
+            max: 106
+        }, {
+            name: "10%",
+            min: 95,
+            max: 105
+        }, {
+            name: "20%",
+
+            min: 96,
+            max: 104
+        }, {
+            name: "30%",
+            min: 97,
+            max: 103
+        }, {
+            name: "40%",
+            min: 98,
+            max: 102
+        }, {
+            name: "50%",
+            min: 99,
+            max: 101
+        }, {
+            name: "60%",
+            min: 100,
+            max: 101
+        }, {
+            name: "70%",
+            min: 93,
+            max: 100
+        }, {
+            name: "80%",
+            min: 100,
+            max: 105
+        }, {
+            name: "90%",
+            min: 92,
+            max: 101
+        }, {
+            name: "100%",
+            min: 91,
+            max: 100
+        }];
+        var grid = {
+            tenure: data.tenure,
+            path: data.path,
+            value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
+            type: type[data.type].name
+        };
+        if (data.tenure == 1 && data.path == 1) {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    callback({
+                        value: true,
+                        comment: "Eureka!"
+                    });
+                }
+            });
+        } else if (data.path == 1) {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    data.tenure = data.tenure - 1;
+                    data.path = data.maxpath;
+                    Grid.generateData(data, callback);
+                }
+            });
+        } else {
+            Grid.save(grid, function (resp) {
+                if (resp.value) {
+                    data.path = data.path - 1;
+                    Grid.generateData(data, callback);
+                }
+            });
         }
     },
     generateRandom: function (max, min) {
