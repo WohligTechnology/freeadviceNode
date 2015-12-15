@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	save: function(req, res) {
+    save: function (req, res) {
         if (req.body) {
             if (req.body._id) {
                 if (req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
@@ -23,7 +23,7 @@ module.exports = {
 
             function user() {
                 console.log(req.body);
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 Grid.save(req.body, print);
@@ -35,10 +35,10 @@ module.exports = {
             });
         }
     },
-    delete: function(req, res) {
+    delete: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 Grid.delete(req.body, print);
@@ -55,28 +55,28 @@ module.exports = {
             });
         }
     },
-    find: function(req, res) {
+    find: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         Grid.find(req.body, callback);
     },
-    generateData: function(req, res) {
+    generateData: function (req, res) {
         function callback(data) {
             res.json(data);
         };
-        Grid.generateData(req.body, callback);
+            Grid.generateData(req.body, callback);
     },
-    generateDataByType: function(req, res) {
+    generateDataByType: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         Grid.generateDataByType(req.body, callback);
     },
-    findone: function(req, res) {
+    findone: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 Grid.findone(req.body, print);
@@ -93,7 +93,7 @@ module.exports = {
             });
         }
     },
-    findlimited: function(req, res) {
+    findlimited: function (req, res) {
         if (req.body) {
             if (req.body.pagesize && req.body.pagesize != "" && req.body.pagenumber && req.body.pagenumber != "") {
                 function callback(data) {
@@ -114,4 +114,3 @@ module.exports = {
         }
     }
 };
-
