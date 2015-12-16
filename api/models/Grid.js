@@ -10,9 +10,11 @@ module.exports = {
 
         sails.query(function (err, db) {
             if (err) {
-                console.log(err);
-                callback({
-                    value: false
+                Grid.save(data, function () {
+                    callback({
+                        value: true,
+                        comment: "retried"
+                    });
                 });
             } else if (db) {
                 console.log(data);
@@ -158,12 +160,12 @@ module.exports = {
             min: 91,
             max: 100
         }];
-        var grid={
-                tenure: data.tenure,
-                path: data.path,
-                value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
-                type: type[data.type].name
-            };
+        var grid = {
+            tenure: data.tenure,
+            path: data.path,
+            value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
+            type: type[data.type].name
+        };
         if (data.tenure == 1 && data.path == 1 && data.type == 0) {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
@@ -182,20 +184,19 @@ module.exports = {
                     Grid.generateData(data, callback);
                 }
             });
-        }else if(data.path == 1){
+        } else if (data.path == 1) {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
-                    data.tenure = data.tenure-1;
+                    data.tenure = data.tenure - 1;
                     data.path = data.maxpath;
                     Grid.generateData(data, callback);
                 }
             });
-        }
-        else {
+        } else {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
-                    data.path= data.path-1;
-                    Grid.generateData(data,callback);
+                    data.path = data.path - 1;
+                    Grid.generateData(data, callback);
                 }
             });
         }
@@ -247,35 +248,34 @@ module.exports = {
             min: 91,
             max: 100
         }];
-        var grid={
-                tenure: data.tenure,
-                path: data.path,
-                value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
-                type: type[data.type].name
-            };
+        var grid = {
+            tenure: data.tenure,
+            path: data.path,
+            value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
+            type: type[data.type].name
+        };
         if (data.tenure == 1 && data.path == 1) {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
-                     callback({
+                    callback({
                         value: true,
                         comment: "Eureka!"
                     });
                 }
             });
-        }else if(data.path == 1){
+        } else if (data.path == 1) {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
-                    data.tenure = data.tenure-1;
+                    data.tenure = data.tenure - 1;
                     data.path = data.maxpath;
                     Grid.generateDataByType(data, callback);
                 }
             });
-        }
-        else {
+        } else {
             Grid.save(grid, function (resp) {
                 if (resp.value) {
-                    data.path= data.path-1;
-                    Grid.generateDataByType(data,callback);
+                    data.path = data.path - 1;
+                    Grid.generateDataByType(data, callback);
                 }
             });
         }

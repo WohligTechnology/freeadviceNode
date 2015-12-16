@@ -146,7 +146,44 @@ module.exports = {
             }
         });
     },
-    //Findlimited
+    generateCashflow: function (data, callback) {
+        var cashflow = [];
+        var tenure = [];
+        var pos;
+        console.log(data);
+        cashflow.push(data.lumpsum); //step 1
+        tenure.push(0);
+        var i = 0,
+            j;
+        for (i = 1; i <= data.monthlycount; i++) {
+            cashflow.push(data.monthly);
+            tenure.push(i);
+        }
+        for (; i < data.startMonth; i++) {
+            cashflow.push(undefined);
+            tenure.push(i);
+        }
+        j = data.startMonth;
+        for (i = data.startMonth; i < data.startMonth + data.reqinstall; i++) {
+            cashflow.push(-1 * Math.round(data.installment * (Math.pow(((100 + data.inflation) / 100), (j / 12)))));
+            tenure.push(i);
+            j++;
+        }
+        var cashten = [];
+        for (var k = 0; k < cashflow.length; k++) {
+            cashten.push([cashflow[k], tenure[k]]);
+        }
+
+
+    },
+    compute: function () {
+        User.generatePathData(){
+            
+        }
+    },
+    generatePathData: function (data, callback) {
+
+    },
     findlimited: function (data, callback) {
         var newreturns = {};
         newreturns.data = [];
