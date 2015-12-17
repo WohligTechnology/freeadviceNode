@@ -1,3 +1,6 @@
+var cashten = [];
+var cashflow = [];
+var tenure = [];
 module.exports = {
     adminlogin: function (data, callback) {
         if (data.password) {
@@ -14,7 +17,7 @@ module.exports = {
                     }).toArray(function (err, found) {
                         if (err) {
                             callback({
-                                value: "false"
+                                value: false
                             });
                             console.log(err);
                             db.close();
@@ -23,7 +26,7 @@ module.exports = {
                             db.close();
                         } else {
                             callback({
-                                value: "false",
+                                value: false,
                                 comment: "No data found"
                             });
                             db.close();
@@ -33,7 +36,7 @@ module.exports = {
                 if (err) {
                     console.log(err);
                     callback({
-                        value: "false"
+                        value: false
                     });
                 }
             });
@@ -147,8 +150,7 @@ module.exports = {
         });
     },
     generateCashflow: function (data, callback) {
-        var cashflow = [];
-        var tenure = [];
+
         var pos;
         console.log(data);
         cashflow.push(data.lumpsum); //step 1
@@ -160,7 +162,7 @@ module.exports = {
             tenure.push(i);
         }
         for (; i < data.startMonth; i++) {
-            cashflow.push(undefined);
+            cashflow.push(0);
             tenure.push(i);
         }
         j = data.startMonth;
@@ -169,17 +171,17 @@ module.exports = {
             tenure.push(i);
             j++;
         }
-        var cashten = [];
+
         for (var k = 0; k < cashflow.length; k++) {
             cashten.push([cashflow[k], tenure[k]]);
         }
 
-
+        callback({
+            value: true
+        });
     },
     compute: function () {
-        User.generatePathData(){
-            
-        }
+
     },
     generatePathData: function (data, callback) {
 

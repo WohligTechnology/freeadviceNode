@@ -388,6 +388,40 @@ module.exports = {
             }
         });
     },
+    //Findlimited
+    findTenureByPath: function (data, callback) {
+        sails.query(function (err, db) {
+            if (err) {
+                console.log(err);
+                callback({
+                    value: false
+                });
+            }
+            if (db) {
+                db.collection("grid").find({
+                    path:data.path,
+                    type:data.type
+                }).toArray(function (err, data2) {
+                    if (err) {
+                        console.log(err);
+                        callback({
+                            value: false
+                        });
+                        db.close();
+                    } else if (data2 && data2[0]) {
+                        callback(data2);
+                        db.close();
+                    } else {
+                        callback({
+                            value: false,
+                            comment: "No data found"
+                        });
+                        db.close();
+                    }
+                });
+            }
+        });
+    },
     delete: function (data, callback) {
         sails.query(function (err, db) {
             if (err) {
