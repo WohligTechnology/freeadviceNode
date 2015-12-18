@@ -213,7 +213,7 @@ module.exports = {
                 longpercent.push(resp.longpercent);
                 shortpercent.push(resp.shortpercent);
             }
-            if (nocallback == 10) {
+            if (nocallback == totalpath) {
                 callCallback();
             } else {
 
