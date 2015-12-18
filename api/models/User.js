@@ -212,12 +212,14 @@ module.exports = {
         var goalcount = 0;
         var short = 0;
         var iteration = 1;
+        var returnthis={};
+        console.log(cash.length);
         _.each(path, function (key) {
             console.log(pathval);
 
             pathval = pathval * (key / 100) + cash[cashmonth];
-            
-            console.log(iteration+" "+goalmonth+" "+pathval + " "+ key+"%");
+
+            console.log(iteration + " " + goalmonth + " " + pathval + " " + key + "%");
             if (pathval < 0)
                 goalcount++;
             if (cash[cashmonth] < 0) {
@@ -225,18 +227,20 @@ module.exports = {
                 goalmonth++;
                 if (goalmonth == 12) {
                     short = pathval;
-                } else if (goalmonth == cash.length - 1) {
+                } else if (cashmonth == cash.length - 1) {
                     console.log("last month");
                     shortterm.push(short);
-                    return {
-                        shortterm: short,
+                    returnthis = {
+                        short: short,
                         count: goalcount
                     };
+                    break;
                 }
             }
             cashmonth++;
             iteration++;
-        })
+        });
+        return returnthis;
     },
     findlimited: function (data, callback) {
         var newreturns = {};
