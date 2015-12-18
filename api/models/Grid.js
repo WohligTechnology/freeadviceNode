@@ -398,6 +398,7 @@ module.exports = {
                 });
             }
             if (db) {
+                
                 db.collection("grid").find({
                     path: data.path,
                     type: data.type

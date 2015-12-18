@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-    save: function(req, res) {
+    save: function (req, res) {
         if (req.body) {
             if (req.body._id) {
                 if (req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
@@ -22,7 +22,7 @@ module.exports = {
             }
 
             function user() {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 User.save(req.body, print);
@@ -34,10 +34,10 @@ module.exports = {
             });
         }
     },
-    delete: function(req, res) {
+    delete: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 User.delete(req.body, print);
@@ -60,52 +60,64 @@ module.exports = {
         };
         User.compute(req.body, callback);
     },
-    find: function(req, res) {
+    alltypes: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.alltypes(req.body, callback);
+    },
+    allpath: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.allpath(req.body, callback);
+    },
+    find: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.find(req.body, callback);
     },
-    generatePathData: function(req, res) {
+    generatePathData: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.generatePathData(req.body, callback);
     },
-     adminlogin: function (req, res) {
+    adminlogin: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.adminlogin(req.body, callback);
     },
-    findApproved: function(req, res) {
+    findApproved: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.findApproved(req.body, callback);
     },
-    deleteRejected: function(req, res) {
+    deleteRejected: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.deleteRejected(req.body, callback);
     },
-    findAwaitingApproval: function(req, res) {
+    findAwaitingApproval: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.findAwaitingApproval(req.body, callback);
     },
-    findRejected: function(req, res) {
+    findRejected: function (req, res) {
         function callback(data) {
             res.json(data);
         };
         User.findRejected(req.body, callback);
     },
-    findone: function(req, res) {
+    findone: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "" && sails.ObjectID.isValid(req.body._id)) {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 User.findone(req.body, print);
@@ -122,10 +134,10 @@ module.exports = {
             });
         }
     },
-    isModerator: function(req, res) {
+    isModerator: function (req, res) {
         if (req.body) {
             if (req.body.moderator && req.body.moderator != "" && sails.ObjectID.isValid(req.body.moderator)) {
-                var print = function(data) {
+                var print = function (data) {
                     res.json(data);
                 }
                 User.isModerator(req.body, print);
@@ -142,7 +154,7 @@ module.exports = {
             });
         }
     },
-    findlimited: function(req, res) {
+    findlimited: function (req, res) {
         if (req.body) {
             if (req.body.pagesize && req.body.pagesize != "" && req.body.pagenumber && req.body.pagenumber != "") {
                 function callback(data) {

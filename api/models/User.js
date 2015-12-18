@@ -148,7 +148,7 @@ module.exports = {
     },
     generateCashflow: function (data, cashflow) {
         var pos;
-        console.log(data);
+
         cashflow.push(data.lumpsum); //step 1
         var i = 0;
 
@@ -163,6 +163,85 @@ module.exports = {
         }
         return true;
     },
+
+    alltypes: function (data, callback) {
+
+        var nocallback = 0;
+        var type = 0;
+        var alltypes = [];
+        function onReturn(resp) {
+            if (resp) {
+                nocallback++;
+                data.type = ++type;
+                alltypes.push(resp);
+            }
+            if (nocallback == 11) {
+                callCallback();
+            } else {
+                User.allpath(data, onReturn);
+            }
+        }
+        data.type = 0;
+        User.compute(data, onReturn);
+
+        function callCallback() {
+            callback(alltypes);
+        }
+
+    },
+    allpath: function (data, callback) {
+        var typeno = data.type;
+        if (data.type == 0) {
+            data.type = "";
+        }
+        data.type = data.type + "0%";
+        var longpercent = [];
+        var shortpercent = [];
+        var count = 0;
+        var nocallback = 0;
+        var i = 1;
+        var totalpath = 99;
+
+        function onReturn(resp) {
+            if (resp) {
+                console.log(typeno+" "+nocallback);
+                nocallback++;
+                data.path = i++;
+                if (resp.count) {
+                    count++;
+                }
+                longpercent.push(resp.longpercent);
+                shortpercent.push(resp.shortpercent);
+            }
+            if (nocallback == 10) {
+                callCallback();
+            } else {
+
+                User.compute(data, onReturn);
+            }
+        }
+        data.path = i;
+        User.compute(data, onReturn);
+
+        function callCallback() {
+
+            var sortedLong = _.sortBy(longpercent, function (n) {
+                return n;
+            });
+            var sortedShort = _.sortBy(shortpercent, function (n) {
+                return n;
+            });
+            var median1 = Math.round(1 / 100 * totalpath);
+            console.log(median1);
+            callback({
+                type: typeno,
+                long: Math.round(sortedLong[median1]),
+                short: Math.round(sortedShort[median1]),
+                goalchance: Math.round(((totalpath - count) / totalpath) * 100)
+            });
+        }
+
+    },
     compute: function (data, callback) {
         var tempoutput;
         var requestData = {};
@@ -174,13 +253,16 @@ module.exports = {
                 path: data.path,
                 type: data.type
             }, function (resp) {
-                if (resp) {
+                if (resp && Array.isArray(resp)) {
                     for (var i = 0; i < cashflow.length; i++) {
                         var key = resp[i];
                         pathPercent[key.tenure - 1] = key.value;
                     };
-                    tempoutput = User.computePathData(pathPercent, cashflow, data.startMonth);
+                    var totalAmountPaid = data.lumpsum + (data.monthly * data.noOfMonth);
+                    tempoutput = User.computePathData(pathPercent, cashflow, data.startMonth, totalAmountPaid);
                     callback(tempoutput);
+                } else {
+                    callback();
                 }
 
             });
@@ -197,7 +279,7 @@ module.exports = {
         });
         return (totalval * -1) + lastamount;
     },
-    computePathData: function (path, cash, startMonth) {
+    computePathData: function (path, cash, startMonth, totalAmountPaid) {
         var pathval;
         var pathvalarr = [];
         pathval = cash[0];
@@ -241,14 +323,15 @@ module.exports = {
             path: path,
             cash: cash,
             startMonth: startMonth,
-            pathval: pathvalarr
+            pathval: pathvalarr,
+            longpercent: (1 - (longvalue / totalAmountPaid)) * -100,
+            shortpercent: (1 - (short / totalAmountPaid)) * -100,
+            totalAmountPaid: totalAmountPaid
         };
         return returnthis;
     },
     computePath: function (data) {
-        console.log(data);
         var output = Math.round(data.pathval * (data.percent / 100) + data.amount);
-        console.log(output);
         if (output < 0)
             return 0;
         else
