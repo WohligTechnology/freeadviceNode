@@ -185,6 +185,7 @@ module.exports = {
         User.compute(data, onReturn);
 
         function callCallback() {
+            console.log(alltypes);
             callback(alltypes);
         }
 
@@ -216,7 +217,6 @@ module.exports = {
             if (nocallback == totalpath) {
                 callCallback();
             } else {
-
                 User.compute(data, onReturn);
             }
         }
