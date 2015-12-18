@@ -1,6 +1,8 @@
 var cashten = [];
 var cashflow = [];
 var tenure = [];
+var pathPercent = [];
+var shortterm = [];
 module.exports = {
     adminlogin: function (data, callback) {
         if (data.password) {
@@ -180,11 +182,61 @@ module.exports = {
             value: true
         });
     },
-    compute: function () {
-
+    compute: function (data, callback) {
+        console.log("here");
+        Grid.findTenureByPath({
+            path: 1,
+            type: "10%"
+        }, function (resp) {
+            if (resp) {
+                console.log(resp);
+                _.each(resp, function (key) {
+                    pathPercent[key.tenure - 1] = key.value;
+                });
+                var data = User.generatePathData(pathPercent, cashflow);
+                console.log(data);
+                if (data) {
+                    callback({
+                        value: true,
+                        data: data
+                    });
+                }
+            }
+        })
     },
-    generatePathData: function (data, callback) {
+    generatePathData: function (path, cash) {
+        var pathval;
+        pathval = cash[0];
+        var goalmonth = 1;
+        var cashmonth = 1;
+        var goalcount = 0;
+        var short = 0;
+        var iteration = 1;
+        _.each(path, function (key) {
+            console.log(pathval);
 
+            pathval = pathval * (key / 100) + cash[cashmonth];
+            
+            console.log(iteration+" "+goalmonth+" "+pathval + " "+ key+"%");
+            if (pathval < 0)
+                goalcount++;
+            if (cash[cashmonth] < 0) {
+                console.log(cashmonth);
+                goalmonth++;
+                if (goalmonth == 12) {
+                    short = pathval;
+                } else if (goalmonth == cash.length - 1) {
+                    console.log("last month");
+                    shortterm.push(short);
+                    return {
+                        shortterm: short,
+                        count: goalcount
+                    };
+                }
+            }
+            cashmonth++;
+            iteration++;
+        })
     },
     findlimited: function (data, callback) {
         var newreturns = {};

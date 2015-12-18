@@ -54,6 +54,12 @@ module.exports = {
             });
         }
     },
+    compute: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.compute(req.body, callback);
+    },
     find: function(req, res) {
         function callback(data) {
             res.json(data);

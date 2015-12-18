@@ -399,8 +399,10 @@ module.exports = {
             }
             if (db) {
                 db.collection("grid").find({
-                    path:data.path,
-                    type:data.type
+                    path: data.path,
+                    type: data.type
+                }).sort({
+                    "tenure": 1
                 }).toArray(function (err, data2) {
                     if (err) {
                         console.log(err);
