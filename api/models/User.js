@@ -164,27 +164,6 @@ module.exports = {
         return true;
     },
     compute: function (data, callback) {
-        /* console.log(cashflow);
-         console.log("here");
-         Grid.findTenureByPath({
-             path: 1,
-             type: "10%"
-         }, function (resp) {
-             if (resp) {
-                 console.log(resp);
-                 _.each(resp, function (key) {
-                     pathPercent[key.tenure - 1] = key.value;
-                 });
-                 var data = User.generatePathData(pathPercent, cashflow);
-                 console.log(data);
-                 if (data) {
-                     callback({
-                         value: true,
-                         data: data
-                     });
-                 }
-             }
-         })*/
         var tempoutput;
         var requestData = {};
         var cashflow = [];
@@ -209,11 +188,7 @@ module.exports = {
         }
     },
     calcLongValue: function (cashflow, currentmonth, lastamount) {
-        console.log(cashflow);
-        console.log(cashflow.length);
-        console.log(currentmonth);
-        console.log(lastamount);
-        var newCashflow = cashflow.slice(0, currentmonth + 1);
+        var newCashflow = cashflow.slice(0, currentmonth);
         var totalval = 0;
         _.each(newCashflow, function (n) {
             if (n < 0) {
@@ -221,7 +196,6 @@ module.exports = {
             }
         });
         return (totalval * -1) + lastamount;
-
     },
     computePathData: function (path, cash, startMonth) {
         var pathval;
@@ -239,25 +213,25 @@ module.exports = {
         var j = 0;
         var returnthis = {};
         for (i = 1; i < path.length; i++) {
-
             prevpathval = pathval;
-
             pathval = User.computePath({
                 pathval: pathval,
                 percent: path[i],
-                amount: cash[cashmonth]
+                amount: cash[i]
             });
-
-
-
             pathvalarr.push(pathval);
-
             if (i == 12) {
                 short = pathval;
             }
             if (pathval == 0 || i == (path.length - 1)) {
-                goalcount = true;
-                longvalue = User.calcLongValue(cash, i, prevpathval);
+
+                if (pathval == 0) {
+                    goalcount = true;
+                    longvalue = User.calcLongValue(cash, i, prevpathval);
+                } else {
+                    longvalue = User.calcLongValue(cash, i + 1, pathval);
+                }
+                break;
             }
         }
         returnthis = {
@@ -274,6 +248,7 @@ module.exports = {
     computePath: function (data) {
         console.log(data);
         var output = Math.round(data.pathval * (data.percent / 100) + data.amount);
+        console.log(output);
         if (output < 0)
             return 0;
         else
