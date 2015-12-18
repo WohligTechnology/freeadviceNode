@@ -1,8 +1,3 @@
-var cashten = [];
-var cashflow = [];
-var tenure = [];
-var pathPercent = [];
-var shortterm = [];
 module.exports = {
     adminlogin: function (data, callback) {
         if (data.password) {
@@ -151,96 +146,138 @@ module.exports = {
             }
         });
     },
-    generateCashflow: function (data, callback) {
-
+    generateCashflow: function (data, cashflow) {
         var pos;
         console.log(data);
         cashflow.push(data.lumpsum); //step 1
-        tenure.push(0);
-        var i = 0,
-            j;
-        for (i = 1; i <= data.monthlycount; i++) {
-            cashflow.push(data.monthly);
-            tenure.push(i);
-        }
-        for (; i < data.startMonth; i++) {
-            cashflow.push(0);
-            tenure.push(i);
-        }
-        j = data.startMonth;
-        for (i = data.startMonth; i < data.startMonth + data.reqinstall; i++) {
-            cashflow.push(-1 * Math.round(data.installment * (Math.pow(((100 + data.inflation) / 100), (j / 12)))));
-            tenure.push(i);
-            j++;
-        }
+        var i = 0;
 
-        for (var k = 0; k < cashflow.length; k++) {
-            cashten.push([cashflow[k], tenure[k]]);
+        for (i = 1; i < (data.startMonth + data.noOfInstallment + 1); i++) {
+            if (i <= data.noOfMonth) {
+                cashflow.push(data.monthly);
+            } else if (i > data.startMonth) {
+                cashflow.push(-1 * Math.round(data.installment * (Math.pow(((100 + data.inflation) / 100), (i / 12)))));
+            } else {
+                cashflow.push(0);
+            }
         }
-
-        callback({
-            value: true
-        });
+        return true;
     },
     compute: function (data, callback) {
-        console.log("here");
-        Grid.findTenureByPath({
-            path: 1,
-            type: "10%"
-        }, function (resp) {
-            if (resp) {
-                console.log(resp);
-                _.each(resp, function (key) {
-                    pathPercent[key.tenure - 1] = key.value;
-                });
-                var data = User.generatePathData(pathPercent, cashflow);
-                console.log(data);
-                if (data) {
-                    callback({
-                        value: true,
-                        data: data
-                    });
+        /* console.log(cashflow);
+         console.log("here");
+         Grid.findTenureByPath({
+             path: 1,
+             type: "10%"
+         }, function (resp) {
+             if (resp) {
+                 console.log(resp);
+                 _.each(resp, function (key) {
+                     pathPercent[key.tenure - 1] = key.value;
+                 });
+                 var data = User.generatePathData(pathPercent, cashflow);
+                 console.log(data);
+                 if (data) {
+                     callback({
+                         value: true,
+                         data: data
+                     });
+                 }
+             }
+         })*/
+        var tempoutput;
+        var requestData = {};
+        var cashflow = [];
+        if (User.generateCashflow(data, cashflow)) {
+
+            var pathPercent = [];
+            Grid.findTenureByPath({
+                path: data.path,
+                type: data.type
+            }, function (resp) {
+                if (resp) {
+                    for (var i = 0; i < cashflow.length; i++) {
+                        var key = resp[i];
+                        pathPercent[key.tenure - 1] = key.value;
+                    };
+                    tempoutput = User.computePathData(pathPercent, cashflow, data.startMonth);
+                    callback(tempoutput);
                 }
-            }
-        })
+
+            });
+
+        }
     },
-    generatePathData: function (path, cash) {
+    calcLongValue: function (cashflow, currentmonth, lastamount) {
+        console.log(cashflow);
+        console.log(cashflow.length);
+        console.log(currentmonth);
+        console.log(lastamount);
+        var newCashflow = cashflow.slice(0, currentmonth + 1);
+        var totalval = 0;
+        _.each(newCashflow, function (n) {
+            if (n < 0) {
+                totalval += n;
+            }
+        });
+        return (totalval * -1) + lastamount;
+
+    },
+    computePathData: function (path, cash, startMonth) {
         var pathval;
+        var pathvalarr = [];
         pathval = cash[0];
+        pathvalarr.push(pathval);
+        var longvalue = 0;
+        var prevpathval = pathval;
         var goalmonth = 1;
         var cashmonth = 1;
-        var goalcount = 0;
+        var goalcount = false;
         var short = 0;
-        var iteration = 1;
-        var returnthis={};
-        console.log(cash.length);
-        _.each(path, function (key) {
-            console.log(pathval);
+        var i = 0;
+        var stopgoal = false;
+        var j = 0;
+        var returnthis = {};
+        for (i = 1; i < path.length; i++) {
 
-            pathval = pathval * (key / 100) + cash[cashmonth];
+            prevpathval = pathval;
 
-            console.log(iteration + " " + goalmonth + " " + pathval + " " + key + "%");
-            if (pathval < 0)
-                goalcount++;
-            if (cash[cashmonth] < 0) {
-                console.log(cashmonth);
-                goalmonth++;
-                if (goalmonth == 12) {
-                    short = pathval;
-                } else if (cashmonth == cash.length - 1) {
-                    console.log("last month");
-                    shortterm.push(short);
-                    returnthis = {
-                        short: short,
-                        count: goalcount
-                    };
-                    break;
-                }
+            pathval = User.computePath({
+                pathval: pathval,
+                percent: path[i],
+                amount: cash[cashmonth]
+            });
+
+
+
+            pathvalarr.push(pathval);
+
+            if (i == 12) {
+                short = pathval;
             }
-            cashmonth++;
-            iteration++;
-        });
+            if (pathval == 0 || i == (path.length - 1)) {
+                goalcount = true;
+                longvalue = User.calcLongValue(cash, i, prevpathval);
+            }
+        }
+        returnthis = {
+            short: short,
+            count: goalcount,
+            long: longvalue,
+            path: path,
+            cash: cash,
+            startMonth: startMonth,
+            pathval: pathvalarr
+        };
         return returnthis;
+    },
+    computePath: function (data) {
+        console.log(data);
+        var output = Math.round(data.pathval * (data.percent / 100) + data.amount);
+        if (output < 0)
+            return 0;
+        else
+            return output;
     },
     findlimited: function (data, callback) {
         var newreturns = {};

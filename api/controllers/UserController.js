@@ -66,12 +66,6 @@ module.exports = {
         };
         User.find(req.body, callback);
     },
-    generateCashflow: function(req, res) {
-        function callback(data) {
-            res.json(data);
-        };
-        User.generateCashflow(req.body, callback);
-    },
     generatePathData: function(req, res) {
         function callback(data) {
             res.json(data);
