@@ -172,19 +172,25 @@ module.exports = {
         function onReturn(resp) {
             if (resp) {
                 nocallback++;
-                data.type = ++type;
                 alltypes.push(resp);
             }
             if (nocallback == 11) {
                 callCallback();
-            } else {
-                User.allpath(data, onReturn);
             }
         }
-        data.type = 0;
-        User.compute(data, onReturn);
+
+        for(var i=0;i<=10;i++)
+        {
+          data.type = i;
+          var data1 = _.clone(data, true);
+          User.allpath(data1, onReturn);
+        }
+
 
         function callCallback() {
+          alltypes = _.sortBy(alltypes,function(n){
+            return n.type;
+          });
             callback(alltypes);
         }
 
