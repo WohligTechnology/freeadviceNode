@@ -146,6 +146,7 @@ module.exports = {
       }
     });
   },
+
   generateCashflow: function(data, cashflow) {
     var pos;
 
@@ -249,6 +250,11 @@ module.exports = {
 
   },
   compute: function(data, cashflow, callback) {
+    if(!cashflow)
+    {
+      cashflow=[];
+      User.generateCashflow(data, cashflow);
+    }
     var tempoutput;
     var requestData = {};
     if (true) {
@@ -275,12 +281,48 @@ module.exports = {
     }
   },
 
-  generateAllPathTenure: function(data,cashflow,callback) {
-    Grid.findGridByType(data,function(res,err){
-      _.each(res,function() {
-        
+  generateAllPathTenure: function(data,callback) {
+    var cashflow = [];
+    User.generateCashflow(data, cashflow);
+    console.log(cashflow);
+    var totalpath = 99;
+    var paths = [];
+    for(var i=0;i<totalpath;i++)
+    {
+      paths[i]={i:i,goalChange:0,shortPercent:0,longPercent:0,pathVal:cashflow[0],pathValArr:[cashflow[0]],values:[]};
+    }
+    Grid.findGridByType(data, function(res,err){
+      _.each(res,function(n) {
+        console.log(n);
+        var i=n.path-1;
+        var tenure = n.tenure;
+        if(i<totalpath && tenure < cashflow.length && paths[i].pathVal>0)
+        {
+          paths[i].values.push(n.value);
+          var newPath = Math.round((paths[i].pathVal * n.value/100)+cashflow[tenure]);
+          if(newPath>0)
+          {
+            if(tenure==12)
+            {
+              paths[i].short=newPath;
+            }
+            paths[i].pathVal=newPath;
+          }
+          else {
+            paths[i].goalChange=1;
+            paths[i].long=User.calcLongValue(cashflow,tenure,paths[i].pathVal);
+            paths[i].pathVal=0;
+          }
+
+          paths[i].pathValArr.push(paths[i].pathVal);
+        }
+
       });
+      paths[0].cashflow = cashflow;
+      callback(paths[0]);
     });
+
+
 
   },
   calcLongValue: function(cashflow, currentmonth, lastamount) {

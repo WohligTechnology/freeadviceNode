@@ -58,7 +58,18 @@ module.exports = {
         function callback(data) {
             res.json(data);
         };
-        User.compute(req.body, callback);
+        User.compute(req.body,false, callback);
+    },
+    generateCashflow: function (req, res) {
+        var callback=[];
+        User.generateCashflow(req.body, callback);
+        res.json(callback);
+    },
+    generateAllPathTenure: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.generateAllPathTenure(req.body, callback);
     },
     alltypes: function (req, res) {
         function callback(data) {
@@ -70,7 +81,9 @@ module.exports = {
         function callback(data) {
             res.json(data);
         };
-        User.allpath(req.body, callback);
+        var cashflow=[];
+        User.generateCashflow(req.body, cashflow);
+        User.allpath(req.body, cashflow,callback);
     },
     find: function (req, res) {
         function callback(data) {
