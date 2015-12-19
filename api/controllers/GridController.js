@@ -113,6 +113,26 @@ module.exports = {
             });
         }
     },
+    findGridByType: function (req, res) {
+        if (req.body) {
+            if (req.body.type && req.body.type != "") {
+                var print = function (data) {
+                    res.json(data);
+                }
+                Grid.findGridByType(req.body, print);
+            } else {
+                res.json({
+                    value: false,
+                    comment: "Grid-id is incorrect"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                comment: "Please provide parameters"
+            });
+        }
+    },
     findlimited: function (req, res) {
         if (req.body) {
             if (req.body.pagesize && req.body.pagesize != "" && req.body.pagenumber && req.body.pagenumber != "") {

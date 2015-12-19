@@ -425,6 +425,43 @@ module.exports = {
             }
         });
     },
+    //Findlimited
+    findGridByType: function (data, callback) {
+        sails.query(function (err, db) {
+            if (err) {
+                console.log(err);
+                callback({
+                    value: false
+                });
+            }
+            if (db) {
+                
+                db.collection("grid").find({
+                    type: data.type
+                }).sort({
+                    "tenure": 1,
+                    "path":1
+                }).toArray(function (err, data2) {
+                    if (err) {
+                        console.log(err);
+                        callback({
+                            value: false
+                        });
+                        db.close();
+                    } else if (data2 && data2[0]) {
+                        callback(data2);
+                        db.close();
+                    } else {
+                        callback({
+                            value: false,
+                            comment: "No data found"
+                        });
+                        db.close();
+                    }
+                });
+            }
+        });
+    },
     delete: function (data, callback) {
         sails.query(function (err, db) {
             if (err) {
