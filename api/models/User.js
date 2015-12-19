@@ -191,7 +191,7 @@ module.exports = {
           alltypes = _.sortBy(alltypes,function(n){
             return n.type;
           });
-            callback(alltypes);
+          callback(alltypes);
         }
 
     },
@@ -222,7 +222,6 @@ module.exports = {
             if (nocallback == totalpath) {
                 callCallback();
             } else {
-
                 User.compute(data, onReturn);
             }
         }
