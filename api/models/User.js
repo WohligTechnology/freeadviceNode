@@ -354,8 +354,8 @@ module.exports = {
             paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
             paths[i].pathVal = 0;
 
-            for (j = i; j < totalpath; j++) {
-              pathvalgrid[tenure][j] = "CCC";
+            for (j = tenure;  j< cashflow.length; j++) {
+              pathvalgrid[j][i] = 0;
             }
 
           }
@@ -376,7 +376,7 @@ module.exports = {
         tenure.push({
           tenureNo: i,
           //path:pathvaltemp,
-          grid:pathvalgrid[i],
+          //grid:pathvalgrid[i],
           median1: pathvaltemp[med1key],
           median50: pathvaltemp[med50key],
           median99: pathvaltemp[med99key],
