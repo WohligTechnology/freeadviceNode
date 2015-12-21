@@ -77,6 +77,12 @@ module.exports = {
         };
         User.alltypes(req.body, callback);
     },
+    alltypes2: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.alltypes2(req.body, callback);
+    },
     allpath: function (req, res) {
         function callback(data) {
             res.json(data);

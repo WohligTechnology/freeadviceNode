@@ -166,8 +166,6 @@ module.exports = {
   },
 
   alltypes: function(data, callback) {
-
-
     var cashflow = [];
     User.generateCashflow(data, cashflow);
     var nocallback = 0;
@@ -198,6 +196,33 @@ module.exports = {
       callback(alltypes);
     }
 
+  },
+  alltypes2: function(data, callback) {
+    var cashflow = [];
+    User.generateCashflow(data, cashflow);
+    var nocallback = 0;
+    var type = 0;
+    var alltypes = [];
+    function onReturn(resp) {
+      if (resp) {
+        nocallback++;
+        alltypes.push(resp);
+      }
+      if (nocallback == 11) {
+        callCallback();
+      }
+    }
+    for (var i = 0; i <= 10; i++) {
+      data.type = i;
+      var data1 = _.clone(data, true);
+      User.generateAllPathTenure(data1, cashflow, onReturn);
+    }
+    function callCallback() {
+      alltypes = _.sortBy(alltypes, function(n) {
+        return n.type;
+      });
+      callback(alltypes);
+    }
   },
   allpath: function(data, cashflow, callback) {
     var typeno = data.type;
@@ -281,19 +306,25 @@ module.exports = {
     }
   },
 
-  generateAllPathTenure: function(data,callback) {
-    var cashflow = [];
-    User.generateCashflow(data, cashflow);
-    console.log(cashflow);
+  generateAllPathTenure: function(data,cashflow,callback) {
+    var typeno = data.type;
+    if (data.type == 0) {
+      data.type = "";
+    }
+    data.type = data.type + "0%";
+    if(!cashflow)
+    {
+      var cashflow = [];
+      User.generateCashflow(data, cashflow);
+    }
     var totalpath = 99;
     var paths = [];
     for(var i=0;i<totalpath;i++)
     {
-      paths[i]={i:i,goalChange:0,shortPercent:0,longPercent:0,pathVal:cashflow[0],pathValArr:[cashflow[0]],values:[]};
+      paths[i]={i:i,goalChange:0,pathVal:cashflow[0],pathValArr:[cashflow[0]],values:[]};
     }
     Grid.findGridByType(data, function(res,err){
       _.each(res,function(n) {
-        console.log(n);
         var i=n.path-1;
         var tenure = n.tenure;
         if(i<totalpath && tenure < cashflow.length && paths[i].pathVal>0)
@@ -313,7 +344,6 @@ module.exports = {
             paths[i].long=User.calcLongValue(cashflow,tenure,paths[i].pathVal);
             paths[i].pathVal=0;
           }
-
           paths[i].pathValArr.push(paths[i].pathVal);
         }
 
