@@ -58,10 +58,10 @@ module.exports = {
         function callback(data) {
             res.json(data);
         };
-        User.compute(req.body,false, callback);
+        User.compute(req.body, false, callback);
     },
     generateCashflow: function (req, res) {
-        var callback=[];
+        var callback = [];
         User.generateCashflow(req.body, callback);
         res.json(callback);
     },
@@ -83,13 +83,27 @@ module.exports = {
         };
         User.alltypes2(req.body, callback);
     },
+    alltypes3: function (req, res) {
+        function callback(data) {
+            res.json(data);
+        };
+        User.alltypes2({
+            "lumpsum": 100000,
+            "monthly": 15000,
+            "noOfMonth": 10,
+            "startMonth": 13,
+            "noOfInstallment": 15,
+            "installment": 20000,
+            "inflation": 6
+        }, callback);
+    },
     allpath: function (req, res) {
         function callback(data) {
             res.json(data);
         };
-        var cashflow=[];
+        var cashflow = [];
         User.generateCashflow(req.body, cashflow);
-        User.allpath(req.body, cashflow,callback);
+        User.allpath(req.body, cashflow, callback);
     },
     find: function (req, res) {
         function callback(data) {
