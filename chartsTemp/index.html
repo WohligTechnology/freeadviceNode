@@ -41,22 +41,22 @@
                 <label for="StartMonth">Time to Goal Start (months)</label>
                 <input type="number" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
         </form>
     </div>
-    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        <div class="container" id="container"></div>
     <script>
         function submitForm() {
             console.log("here");
             $data = {
-                    lumpsum: parseInt(document.getElementById("LumpsumCont").value),
-                    monthly: parseInt(document.getElementById("MonthlyCont").value),
-                    noOfMonth: parseInt(document.getElementById("MonthlyContNo").value),
-                    startMonth: parseInt(document.getElementById("StartMonth").value),
-                    noOfInstallment: parseInt(document.getElementById("RequiredInstallment").value),
-                    installment: parseInt(document.getElementById("Installment").value),
-                    inflation: parseInt(document.getElementById("Inflation").value)
-                };
+                lumpsum: parseInt(document.getElementById("LumpsumCont").value),
+                monthly: parseInt(document.getElementById("MonthlyCont").value),
+                noOfMonth: parseInt(document.getElementById("MonthlyContNo").value),
+                startMonth: parseInt(document.getElementById("StartMonth").value),
+                noOfInstallment: parseInt(document.getElementById("RequiredInstallment").value),
+                installment: parseInt(document.getElementById("Installment").value),
+                inflation: parseInt(document.getElementById("Inflation").value)
+            };
             console.log($data);
             $.ajax({
                 type: 'POST',
@@ -70,10 +70,11 @@
                     var median50 = _.pluck(firstArr, "median50");
                     var median99 = _.pluck(firstArr, "median99");
                     var tenures = _.pluck(firstArr, "tenureNo");
+                    var percentage = _.pluck(firstArr, "percentage");
 
                     createGraph(tenures, median1, median50, median99);
                 },
-                contentType:'application/json',
+                contentType: 'application/json',
                 dataType: 'json'
             });
         }
