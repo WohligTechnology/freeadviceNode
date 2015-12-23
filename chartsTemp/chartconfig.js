@@ -1,8 +1,4 @@
 function createGraph(tenure, median1, median50, median99) {
-    console.log(tenure);
-    console.log(median1);
-    console.log(median50);
-    console.log(median99);
     
     $('#container').highcharts({
         title: {

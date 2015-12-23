@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -6,28 +7,76 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="chartconfig.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css">
 </head>
 
 <body>
-
+    <div class="col-md-offset-4 col-xs-offset-2 col-md-4 col-xs-8">
+        <form id="planner" action="javascript:submitForm();">
+            <div class="form-group">
+                <label for="LumpsumCont">Lumpsum Contribution</label>
+                <input type="number" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
+            </div>
+            <div class="form-group">
+                <label for="MonthlyCont">Monthly Contribution</label>
+                <input type="number" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
+            </div>
+            <div class="form-group">
+                <label for="MonthlyContNo">Monthly Contribution Nos.</label>
+                <input type="number" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
+            </div>
+            <div class="form-group">
+                <label for="Installment">Installment Present Value</label>
+                <input type="number" class="form-control" id="Installment" placeholder="Installment Present Value">
+            </div>
+            <div class="form-group">
+                <label for="RequiredInstallment">Required Installments</label>
+                <input type="number" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
+            </div>
+            <div class="form-group">
+                <label for="Inflation">Expected Inflation Rate</label>
+                <input type="number" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
+            </div>
+            <div class="form-group">
+                <label for="StartMonth">Time to Goal Start (months)</label>
+                <input type="number" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
     <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
     <script>
-        //        createGraph();
-        $(document).ready(function () {
-            $.get("http://localhost:1337/user/alltypes3", function (data) {
-                console.log(data);
-                var firstArr = data[0];
-                firstArr = firstArr.slice(1);
+        function submitForm() {
+            console.log("here");
+            $data = {
+                    lumpsum: parseInt(document.getElementById("LumpsumCont").value),
+                    monthly: parseInt(document.getElementById("MonthlyCont").value),
+                    noOfMonth: parseInt(document.getElementById("MonthlyContNo").value),
+                    startMonth: parseInt(document.getElementById("StartMonth").value),
+                    noOfInstallment: parseInt(document.getElementById("RequiredInstallment").value),
+                    installment: parseInt(document.getElementById("Installment").value),
+                    inflation: parseInt(document.getElementById("Inflation").value)
+                };
+            console.log($data);
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:1337/user/alltypes2',
+                data: JSON.stringify($data), // or JSON.stringify ({name: 'jonas'}),
+                success: function (data) {
+                    var firstArr = data[0];
+                    firstArr = firstArr.slice(1);
 
-                var median1 = _.pluck(firstArr, "median1");
-                var median50 = _.pluck(firstArr, "median50");
-                var median99 = _.pluck(firstArr, "median99");
-                var tenures = _.pluck(firstArr, "tenureNo");
+                    var median1 = _.pluck(firstArr, "median1");
+                    var median50 = _.pluck(firstArr, "median50");
+                    var median99 = _.pluck(firstArr, "median99");
+                    var tenures = _.pluck(firstArr, "tenureNo");
 
-                createGraph(tenures, median1, median50, median99);
-
+                    createGraph(tenures, median1, median50, median99);
+                },
+                contentType:'application/json',
+                dataType: 'json'
             });
-        });
+        }
     </script>
 </body>
 
