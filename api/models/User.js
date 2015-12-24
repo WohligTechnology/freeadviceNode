@@ -348,16 +348,14 @@ module.exports = {
                             paths[i].short = newPath;
                         }
                         paths[i].pathVal = newPath;
+                        paths[i].goalChange = 0;
                     } else {
-
                         paths[i].goalChange = 1;
                         paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
                         paths[i].pathVal = 0;
-
                         for (j = tenure; j < cashflow.length; j++) {
                             pathvalgrid[j][i] = 0;
                         }
-
                     }
                     paths[i].pathValArr.push(paths[i].pathVal);
                 }
@@ -375,22 +373,17 @@ module.exports = {
 
                 tenure.push({
                     tenureNo: i,
-                    //path:pathvaltemp,
-                    //grid:pathvalgrid[i],
                     median1: pathvaltemp[med1key],
                     median50: pathvaltemp[med50key],
                     median99: pathvaltemp[med99key],
                     pathlength: pathvaltemp.length
                 });
                 if (i == 0) {
-                    tenure[i].percentage = User.calcLongValue(cashflow, i + 1, cashflow[0]);
-                    // tenure[i].cashflow = cashflow;
+                    tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, cashflow[0]);
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = cashflow[0];
-
                 } else {
-                    tenure[i].percentage = User.calcLongValue(cashflow, i + 1, tenure[i].median1);
-                    // tenure[i].cashflow = cashflow;
+                    tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, tenure[i].median1);
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = tenure[i].median1;
                 }

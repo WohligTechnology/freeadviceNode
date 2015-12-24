@@ -11,8 +11,12 @@
 </head>
 
 <body>
-    <div class="col-md-offset-4 col-xs-offset-2 col-md-4 col-xs-8">
-        <form id="planner" action="javascript:submitForm();">
+    <div class="container">
+        <div class=" col-md-6">
+           <div class="spacer" style="height: 20px;">
+
+        </div>
+            <form id="planner" action="javascript:submitForm();">
             <div class="form-group">
                 <label for="LumpsumCont">Lumpsum Contribution</label>
                 <input type="number" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
@@ -43,8 +47,25 @@
             </div>
             <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
         </form>
+        </div>
+        
+        <div class="col-md-6">
+           <div class="spacer" style="height: 20px;">
+
+        </div>
+            <blockquote class="text-uppercase">
+            <p>short term loss : <span id="percent"></span></p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Goal chance :</p>
+        </blockquote>
+        <div class="spacer" style="height: 40px;">
+
+        </div>
+        <div id="container" style="width: 100%; height: 400px; margin: 0 auto"></div>
+        </div>
     </div>
-        <div class="container" id="container"></div>
+    
     <script>
         function submitForm() {
             console.log("here");
@@ -61,7 +82,7 @@
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:1337/user/alltypes2',
-                data: JSON.stringify($data), // or JSON.stringify ({name: 'jonas'}),
+                data: JSON.stringify($data),
                 success: function (data) {
                     var firstArr = data[0];
                     firstArr = firstArr.slice(1);
@@ -71,7 +92,15 @@
                     var median99 = _.pluck(firstArr, "median99");
                     var tenures = _.pluck(firstArr, "tenureNo");
                     var percentage = _.pluck(firstArr, "percentage");
+                    percentage = percentage.slice(0, 12);
+                    console.log("percentage : " + percentage.length);
+                    console.log(percentage);
+                    percentage = _.sortBy(percentage, function (n) {
+                        return n;
+                    });
+                                        console.log(percentage);
 
+                    document.getElementById("percent").innerHTML= percentage[0].toFixed(2);;
                     createGraph(tenures, median1, median50, median99);
                 },
                 contentType: 'application/json',
