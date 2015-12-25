@@ -169,18 +169,27 @@
             console.log($data);
             var feasible = [];
             var goals = [];
-            var longinput = parseInt(document.getElementById("longterm").value);
-            var shortinput = parseInt(document.getElementById("shortterm").value);
+            var longinput = parseFloat(document.getElementById("longterm").value);
+            var shortinput = parseFloat(document.getElementById("shortterm").value);
             var short = [];
             var long = [];
+            for (var i = 0; i < 11; i++) {
+                goals[i] = 0;
+                short[i] = 0;
+                long[i] = 0;
+            }
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:1337/user/alltypes2',
                 data: JSON.stringify($data),
                 success: function (data) {
                     var i = 0;
-                    _.each(data, function (firstArr) {
-                        firstArr = firstArr.slice(1);
+                    data = _.sortBy(data, function(n) {
+                        return n.type;
+                    });
+                    console.log(data);
+                    _.each(data, function (key) {
+                        firstArr = key.tenure.slice(1);
                         var median1 = _.pluck(firstArr, "median1");
                         var median50 = _.pluck(firstArr, "median50");
                         var median99 = _.pluck(firstArr, "median99");
@@ -190,22 +199,20 @@
                         percentage = _.sortBy(percentage, function (n) {
                             return n;
                         });
-                        var shorttemp = percentage[0].toFixed(2);
-                        var goaltemp = firstArr[0].goalchance.toFixed(2);
-                        var longtemp = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
-                        goals.push(goaltemp);
-                        short.push(shorttemp);
-                        long.push(longtemp);
-                        if (goaltemp > 60 && shorttemp > shortinput && longtemp > longinput) {
+                        short[i] = percentage[0].toFixed(2);
+                        goals[i] = firstArr[0].goalchance.toFixed(2);
+                        long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+                        console.log(goals[i]+" "+shortinput+" "+longinput)
+                        if (goals[i] > 60 && short[i] > shortinput && long[i] > longinput) {
                             feasible.push({
                                 type: i,
                                 tenures: tenures,
                                 median1: median1,
                                 median50: median50,
                                 median99: median99,
-                                short: shorttemp,
-                                goal: goaltemp,
-                                long: longtemp
+                                short: short[i],
+                                goal: goals[i],
+                                long: long[i]
                             });
                         }
                         i++;
@@ -219,7 +226,6 @@
                     document.getElementById("goal").innerHTML = feasible[0].goal;
                     document.getElementById("long").innerHTML = feasible[0].long;
                     createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type);
-                    goalGraph(goals);
                 },
                 contentType: 'application/json',
                 dataType: 'json'

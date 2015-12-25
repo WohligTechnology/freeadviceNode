@@ -204,10 +204,11 @@ module.exports = {
         var type = 0;
         var alltypes = [];
 
-        function onReturn(resp) {
+        function onReturn(resp,type) {
             if (resp) {
+                var obj = {type: type,tenure: resp};
                 nocallback++;
-                alltypes.push(resp);
+                alltypes.push(obj);
             }
             if (nocallback == 11) {
                 callCallback();
@@ -393,7 +394,7 @@ module.exports = {
             }
             
             console.log(tenure.length);
-            callback(tenure);
+            callback(tenure,typeno);
         })
 
 
