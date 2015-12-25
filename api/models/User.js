@@ -209,11 +209,11 @@ module.exports = {
                 nocallback++;
                 alltypes.push(resp);
             }
-            if (nocallback == 1) {
+            if (nocallback == 11) {
                 callCallback();
             }
         }
-        for (var i = 0; i <= 0; i++) {
+        for (var i = 0; i <= 10; i++) {
             data.type = i;
             var data1 = _.clone(data, true);
             User.generateAllPathTenure(data1, cashflow, onReturn);
@@ -310,6 +310,7 @@ module.exports = {
     generateAllPathTenure: function (data, cashflow, callback) {
         var typeno = data.type;
         var pathvalgrid = [];
+        var goalcount=0;
         var pathtemp = [];
         _.each(cashflow, function () {
             pathvalgrid.push([]);
@@ -348,9 +349,9 @@ module.exports = {
                             paths[i].short = newPath;
                         }
                         paths[i].pathVal = newPath;
-                        paths[i].goalChange = 0;
                     } else {
                         paths[i].goalChange = 1;
+                        ++goalcount;
                         paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
                         paths[i].pathVal = 0;
                         for (j = tenure; j < cashflow.length; j++) {
@@ -376,7 +377,8 @@ module.exports = {
                     median1: pathvaltemp[med1key],
                     median50: pathvaltemp[med50key],
                     median99: pathvaltemp[med99key],
-                    pathlength: pathvaltemp.length
+                    pathlength: pathvaltemp.length,
+                    goalchance: 100 - ((goalcount/totalpath)*100)
                 });
                 if (i == 0) {
                     tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, cashflow[0]);
@@ -389,7 +391,7 @@ module.exports = {
                 }
 
             }
-
+            
             console.log(tenure.length);
             callback(tenure);
         })

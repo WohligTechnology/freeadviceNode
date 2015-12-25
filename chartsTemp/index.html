@@ -8,67 +8,155 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="chartconfig.js"></script>
     <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="page.css">
 </head>
 
 <body>
     <div class="container">
         <div class=" col-md-6">
-           <div class="spacer" style="height: 20px;">
+            <div class="spacer" style="height: 20px;">
 
-        </div>
+            </div>
             <form id="planner" action="javascript:submitForm();">
-            <div class="form-group">
-                <label for="LumpsumCont">Lumpsum Contribution</label>
-                <input type="number" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
-            </div>
-            <div class="form-group">
-                <label for="MonthlyCont">Monthly Contribution</label>
-                <input type="number" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
-            </div>
-            <div class="form-group">
-                <label for="MonthlyContNo">Monthly Contribution Nos.</label>
-                <input type="number" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
-            </div>
-            <div class="form-group">
-                <label for="Installment">Installment Present Value</label>
-                <input type="number" class="form-control" id="Installment" placeholder="Installment Present Value">
-            </div>
-            <div class="form-group">
-                <label for="RequiredInstallment">Required Installments</label>
-                <input type="number" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
-            </div>
-            <div class="form-group">
-                <label for="Inflation">Expected Inflation Rate</label>
-                <input type="number" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
-            </div>
-            <div class="form-group">
-                <label for="StartMonth">Time to Goal Start (months)</label>
-                <input type="number" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
-        </form>
+                <div class="form-group">
+                    <label for="LumpsumCont">Lumpsum Contribution</label>
+                    <input type="number" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
+                </div>
+                <div class="form-group">
+                    <label for="MonthlyCont">Monthly Contribution</label>
+                    <input type="number" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
+                </div>
+                <div class="form-group">
+                    <label for="MonthlyContNo">Monthly Contribution Nos.</label>
+                    <input type="number" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
+                </div>
+                <div class="form-group">
+                    <label for="Installment">Installment Present Value</label>
+                    <input type="number" class="form-control" id="Installment" placeholder="Installment Present Value">
+                </div>
+                <div class="form-group">
+                    <label for="RequiredInstallment">Required Installments</label>
+                    <input type="number" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
+                </div>
+                <div class="form-group">
+                    <label for="Inflation">Expected Inflation Rate</label>
+                    <input type="number" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
+                </div>
+                <div class="form-group">
+                    <label for="StartMonth">Time to Goal Start (months)</label>
+                    <input type="number" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
+                </div>
+                <div class="form-group">
+                    <label for="Inflation">Short-Term Volatility</label>
+                    <input type="number" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
+                </div>
+                <div class="form-group">
+                    <label for="StartMonth">Long-Term Volatility</label>
+                    <input type="number" class="form-control" id="longterm" placeholder="Long-Term Volatility">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+            </form>
         </div>
-        
+
         <div class="col-md-6">
-           <div class="spacer" style="height: 20px;">
+            <div class="spacer" style="height: 20px;">
 
-        </div>
+            </div>
             <blockquote class="text-uppercase">
-            <p>short term loss : <span id="percent"></span></p>
-        </blockquote>
-        <blockquote class="text-uppercase">
-            <p>Goal chance :</p>
-        </blockquote>
-        <div class="spacer" style="height: 40px;">
+                <p>short term loss : <span id="percent"></span>%</p>
+            </blockquote>
+            <blockquote class="text-uppercase">
+                <p>Goal chance : <span id="goal"></span>%</p>
+            </blockquote>
+            <blockquote class="text-uppercase">
+                <p>Long Loss : <span id="long"></span>%</p>
+            </blockquote>
+            <div class="spacer" style="height: 40px;">
 
+            </div>
+            <div id="container" style="width: 100%; height: 400px; margin: 0 auto"></div>
         </div>
-        <div id="container" style="width: 100%; height: 400px; margin: 0 auto"></div>
-        </div>
+
+
     </div>
-    
+
+
+    <div class="container">
+        <table class="table table-hover">
+            <tr>
+                <th>Equity</th>
+                <th>0 %</th>
+                <th>10 %</th>
+                <th>20 %</th>
+                <th>30 %</th>
+                <th>40 %</th>
+                <th>50 %</th>
+                <th>60 %</th>
+                <th>70 %</th>
+                <th>80 %</th>
+                <th>90 %</th>
+                <th>100 %</th>
+            </tr>
+            <tr>
+                <td>Debt</td>
+                <td>100 %</td>
+                <td>90 %</td>
+                <td>80 %</td>
+                <td>70 %</td>
+                <td>60 %</td>
+                <td>50 %</td>
+                <td>40 %</td>
+                <td>30 %</td>
+                <td>20 %</td>
+                <td>10 %</td>
+                <td>0 %</td>
+            </tr>
+            <tr>
+                <td>Goal</td>
+                <td id="g0"></td>
+                <td id="g1"></td>
+                <td id="g2"></td>
+                <td id="g3"></td>
+                <td id="g4"></td>
+                <td id="g5"></td>
+                <td id="g6"></td>
+                <td id="g7"></td>
+                <td id="g8"></td>
+                <td id="g9"></td>
+                <td id="g10"></td>
+            </tr>
+            <tr>
+                <td>Short term loss</td>
+                <td id="s0"></td>
+                <td id="s1"></td>
+                <td id="s2"></td>
+                <td id="s3"></td>
+                <td id="s4"></td>
+                <td id="s5"></td>
+                <td id="s6"></td>
+                <td id="s7"></td>
+                <td id="s8"></td>
+                <td id="s9"></td>
+                <td id="s10"></td>
+            </tr>
+            <tr>
+                <td>Long term loss</td>
+                <td id="l0"></td>
+                <td id="l1"></td>
+                <td id="l2"></td>
+                <td id="l3"></td>
+                <td id="l4"></td>
+                <td id="l5"></td>
+                <td id="l6"></td>
+                <td id="l7"></td>
+                <td id="l8"></td>
+                <td id="l9"></td>
+                <td id="l10"></td>
+            </tr>
+        </table>
+    </div>
     <script>
         function submitForm() {
-            console.log("here");
             $data = {
                 lumpsum: parseInt(document.getElementById("LumpsumCont").value),
                 monthly: parseInt(document.getElementById("MonthlyCont").value),
@@ -79,29 +167,59 @@
                 inflation: parseInt(document.getElementById("Inflation").value)
             };
             console.log($data);
+            var feasible = [];
+            var goals = [];
+            var longinput = parseInt(document.getElementById("longterm").value);
+            var shortinput = parseInt(document.getElementById("shortterm").value);
+            var short = [];
+            var long = [];
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:1337/user/alltypes2',
                 data: JSON.stringify($data),
                 success: function (data) {
-                    var firstArr = data[0];
-                    firstArr = firstArr.slice(1);
-
-                    var median1 = _.pluck(firstArr, "median1");
-                    var median50 = _.pluck(firstArr, "median50");
-                    var median99 = _.pluck(firstArr, "median99");
-                    var tenures = _.pluck(firstArr, "tenureNo");
-                    var percentage = _.pluck(firstArr, "percentage");
-                    percentage = percentage.slice(0, 12);
-                    console.log("percentage : " + percentage.length);
-                    console.log(percentage);
-                    percentage = _.sortBy(percentage, function (n) {
-                        return n;
+                    var i = 0;
+                    _.each(data, function (firstArr) {
+                        firstArr = firstArr.slice(1);
+                        var median1 = _.pluck(firstArr, "median1");
+                        var median50 = _.pluck(firstArr, "median50");
+                        var median99 = _.pluck(firstArr, "median99");
+                        var tenures = _.pluck(firstArr, "tenureNo");
+                        var percentage = _.pluck(firstArr, "percentage");
+                        percentage = percentage.slice(0, 12);
+                        percentage = _.sortBy(percentage, function (n) {
+                            return n;
+                        });
+                        var shorttemp = percentage[0].toFixed(2);
+                        var goaltemp = firstArr[0].goalchance.toFixed(2);
+                        var longtemp = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+                        goals.push(goaltemp);
+                        short.push(shorttemp);
+                        long.push(longtemp);
+                        if (goaltemp > 60 && shorttemp > shortinput && longtemp > longinput) {
+                            feasible.push({
+                                type: i,
+                                tenures: tenures,
+                                median1: median1,
+                                median50: median50,
+                                median99: median99,
+                                short: shorttemp,
+                                goal: goaltemp,
+                                long: longtemp
+                            });
+                        }
+                        i++;
                     });
-                                        console.log(percentage);
-
-                    document.getElementById("percent").innerHTML= percentage[0].toFixed(2);;
-                    createGraph(tenures, median1, median50, median99);
+                    for (var i = 0; i < 11; i++) {
+                        document.getElementById("g" + i).innerHTML = goals[i];
+                        document.getElementById("s" + i).innerHTML = short[i];
+                        document.getElementById("l" + i).innerHTML = long[i];
+                    }
+                    document.getElementById("percent").innerHTML = feasible[0].short;
+                    document.getElementById("goal").innerHTML = feasible[0].goal;
+                    document.getElementById("long").innerHTML = feasible[0].long;
+                    createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type);
+                    goalGraph(goals);
                 },
                 contentType: 'application/json',
                 dataType: 'json'

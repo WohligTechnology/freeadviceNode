@@ -1,15 +1,21 @@
-function createGraph(tenure, median1, median50, median99) {
+function createGraph(tenure, median1, median50, median99,type) {
     
     $('#container').highcharts({
+        credits: {
+            enabled: false  
+        },
         title: {
-            text: 'Graph 1',
+            text: 'Type '+type,
             x: -20 //center
         },
         subtitle: {
-            text: 'Medians',
+            text: 'Equity: '+type*10+'%, Debt: '+(100-type*10)+'%',
             x: -20
         },
         xAxis: {
+            title: {
+                text: 'Tenure month'
+            },
             categories: tenure
         },
         yAxis: {
@@ -23,7 +29,7 @@ function createGraph(tenure, median1, median50, median99) {
             }]
         },
         tooltip: {
-            valueSuffix: 'Rs.'
+            valuePrefix: 'Rs.'
         },
         legend: {
             layout: 'vertical',
