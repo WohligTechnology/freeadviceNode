@@ -159,8 +159,11 @@
         </table>
     </div>
     <script>
+      var minimumGoal = 50;
         function addGreenRed(id, value, compare) {
             $("#" + id).html(value);
+            $("#" + id).parents("td").removeClass("green");
+            $("#" + id).parents("td").removeClass("red");
             if (value > compare) {
                 $("#" + id).parents("td").addClass("green");
             } else {
@@ -215,7 +218,7 @@
                         goals[i] = firstArr[0].goalchance.toFixed(2);
                         long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
                         console.log(goals[i] + " " + shortinput + " " + longinput)
-                        if (goals[i] > 60 && short[i] > shortinput && long[i] > longinput) {
+                        if (goals[i] > minimumGoal && short[i] > shortinput && long[i] > longinput) {
                             feasible.push({
                                 type: i,
                                 tenures: tenures,
@@ -230,7 +233,7 @@
                         i++;
                     });
                     for (var i = 0; i < 11; i++) {
-                        addGreenRed("g" + i, goals[i], 60);
+                        addGreenRed("g" + i, goals[i], minimumGoal);
                         addGreenRed("s" + i, short[i], shortinput);
                         addGreenRed("l" + i, long[i], longinput);
 
