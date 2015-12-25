@@ -20,45 +20,45 @@
             <form id="planner" action="javascript:submitForm();">
                 <div class="form-group">
                     <label for="LumpsumCont">Lumpsum Contribution</label>
-                    <input type="number" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
+                    <input type="number" value="100000" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
                 </div>
                 <div class="form-group">
                     <label for="MonthlyCont">Monthly Contribution</label>
-                    <input type="number" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
+                    <input type="number" value="15000" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
                 </div>
                 <div class="form-group">
                     <label for="MonthlyContNo">Monthly Contribution Nos.</label>
-                    <input type="number" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
+                    <input type="number" value="10" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
                 </div>
                 <div class="form-group">
                     <label for="Installment">Installment Present Value</label>
-                    <input type="number" class="form-control" id="Installment" placeholder="Installment Present Value">
+                    <input type="number" value="20000" class="form-control" id="Installment" placeholder="Installment Present Value">
                 </div>
                 <div class="form-group">
                     <label for="RequiredInstallment">Required Installments</label>
-                    <input type="number" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
+                    <input type="number" value="10" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
                 </div>
                 <div class="form-group">
                     <label for="Inflation">Expected Inflation Rate</label>
-                    <input type="number" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
+                    <input type="number" value="6" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
                 </div>
                 <div class="form-group">
                     <label for="StartMonth">Time to Goal Start (months)</label>
-                    <input type="number" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
+                    <input type="number" value="13" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
                 </div>
                 <div class="form-group">
                     <label for="Inflation">Short-Term Volatility</label>
-                    <input type="number" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
+                    <input type="number" value="2" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
                 </div>
                 <div class="form-group">
                     <label for="StartMonth">Long-Term Volatility</label>
-                    <input type="number" class="form-control" id="longterm" placeholder="Long-Term Volatility">
+                    <input type="number" value="2" class="form-control" id="longterm" placeholder="Long-Term Volatility">
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
             </form>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 graphsec" >
             <div class="spacer" style="height: 20px;">
 
             </div>
@@ -81,81 +81,93 @@
     </div>
 
 
-    <div class="container">
+    <div class="container fortable">
+        <div class="spacer" style="height: 40px;">
+
+        </div>
         <table class="table table-hover">
             <tr>
                 <th>Equity</th>
-                <th>0 %</th>
-                <th>10 %</th>
-                <th>20 %</th>
-                <th>30 %</th>
-                <th>40 %</th>
-                <th>50 %</th>
-                <th>60 %</th>
-                <th>70 %</th>
-                <th>80 %</th>
-                <th>90 %</th>
-                <th>100 %</th>
+                <th>0%</th>
+                <th>10%</th>
+                <th>20%</th>
+                <th>30%</th>
+                <th>40%</th>
+                <th>50%</th>
+                <th>60%</th>
+                <th>70%</th>
+                <th>80%</th>
+                <th>90%</th>
+                <th>100%</th>
             </tr>
             <tr>
-                <td>Debt</td>
-                <td>100 %</td>
-                <td>90 %</td>
-                <td>80 %</td>
-                <td>70 %</td>
-                <td>60 %</td>
-                <td>50 %</td>
-                <td>40 %</td>
-                <td>30 %</td>
-                <td>20 %</td>
-                <td>10 %</td>
-                <td>0 %</td>
+                <th>Debt</th>
+                <th>100%</th>
+                <th>90%</th>
+                <th>80%</th>
+                <th>70%</th>
+                <th>60%</th>
+                <th>50%</th>
+                <th>40%</th>
+                <th>30%</th>
+                <th>20%</th>
+                <th>10%</th>
+                <th>0%</th>
             </tr>
             <tr>
                 <td>Goal</td>
-                <td id="g0"></td>
-                <td id="g1"></td>
-                <td id="g2"></td>
-                <td id="g3"></td>
-                <td id="g4"></td>
-                <td id="g5"></td>
-                <td id="g6"></td>
-                <td id="g7"></td>
-                <td id="g8"></td>
-                <td id="g9"></td>
-                <td id="g10"></td>
+                <td><span id="g0"></span>%</td>
+                <td><span id="g1"></span>%</td>
+                <td><span id="g2"></span>%</td>
+                <td><span id="g3"></span>%</td>
+                <td><span id="g4"></span>%</td>
+                <td><span id="g5"></span>%</td>
+                <td><span id="g6"></span>%</td>
+                <td><span id="g7"></span>%</td>
+                <td><span id="g8"></span>%</td>
+                <td><span id="g9"></span>%</td>
+                <td><span id="g10"></span>%</td>
             </tr>
             <tr>
                 <td>Short term loss</td>
-                <td id="s0"></td>
-                <td id="s1"></td>
-                <td id="s2"></td>
-                <td id="s3"></td>
-                <td id="s4"></td>
-                <td id="s5"></td>
-                <td id="s6"></td>
-                <td id="s7"></td>
-                <td id="s8"></td>
-                <td id="s9"></td>
-                <td id="s10"></td>
+                <td><span id="s0"></span>%</td>
+                <td><span id="s1"></span>%</td>
+                <td><span id="s2"></span>%</td>
+                <td><span id="s3"></span>%</td>
+                <td><span id="s4"></span>%</td>
+                <td><span id="s5"></span>%</td>
+                <td><span id="s6"></span>%</td>
+                <td><span id="s7"></span>%</td>
+                <td><span id="s8"></span>%</td>
+                <td><span id="s9"></span>%</td>
+                <td><span id="s10"></span>%</td>
             </tr>
             <tr>
                 <td>Long term loss</td>
-                <td id="l0"></td>
-                <td id="l1"></td>
-                <td id="l2"></td>
-                <td id="l3"></td>
-                <td id="l4"></td>
-                <td id="l5"></td>
-                <td id="l6"></td>
-                <td id="l7"></td>
-                <td id="l8"></td>
-                <td id="l9"></td>
-                <td id="l10"></td>
+                <td><span id="l0"></span>%</td>
+                <td><span id="l1"></span>%</td>
+                <td><span id="l2"></span>%</td>
+                <td><span id="l3"></span>%</td>
+                <td><span id="l4"></span>%</td>
+                <td><span id="l5"></span>%</td>
+                <td><span id="l6"></span>%</td>
+                <td><span id="l7"></span>%</td>
+                <td><span id="l8"></span>%</td>
+                <td><span id="l9"></span>%</td>
+                <td><span id="l10"></span>%</td>
             </tr>
         </table>
     </div>
     <script>
+        function addGreenRed(id, value, compare) {
+            $("#" + id).html(value);
+            if (value > compare) {
+                $("#" + id).parents("td").addClass("green");
+            } else {
+                $("#" + id).parents("td").addClass("red");
+            }
+        }
+
         function submitForm() {
             $data = {
                 lumpsum: parseInt(document.getElementById("LumpsumCont").value),
@@ -184,7 +196,7 @@
                 data: JSON.stringify($data),
                 success: function (data) {
                     var i = 0;
-                    data = _.sortBy(data, function(n) {
+                    data = _.sortBy(data, function (n) {
                         return n.type;
                     });
                     console.log(data);
@@ -202,7 +214,7 @@
                         short[i] = percentage[0].toFixed(2);
                         goals[i] = firstArr[0].goalchance.toFixed(2);
                         long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
-                        console.log(goals[i]+" "+shortinput+" "+longinput)
+                        console.log(goals[i] + " " + shortinput + " " + longinput)
                         if (goals[i] > 60 && short[i] > shortinput && long[i] > longinput) {
                             feasible.push({
                                 type: i,
@@ -218,18 +230,25 @@
                         i++;
                     });
                     for (var i = 0; i < 11; i++) {
-                        document.getElementById("g" + i).innerHTML = goals[i];
-                        document.getElementById("s" + i).innerHTML = short[i];
-                        document.getElementById("l" + i).innerHTML = long[i];
+                        addGreenRed("g" + i, goals[i], 60);
+                        addGreenRed("s" + i, short[i], shortinput);
+                        addGreenRed("l" + i, long[i], longinput);
+
+                        $("#s" + i).html(short[i]);
+                        $("#l" + i).html(long[i]);
                     }
                     document.getElementById("percent").innerHTML = feasible[0].short;
                     document.getElementById("goal").innerHTML = feasible[0].goal;
                     document.getElementById("long").innerHTML = feasible[0].long;
+                    $(".container.fortable").show();
+                    $(".graphsec").show();
                     createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type);
                 },
                 contentType: 'application/json',
                 dataType: 'json'
             });
+
+
         }
     </script>
 </body>

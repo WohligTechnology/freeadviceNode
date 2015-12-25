@@ -36,3 +36,16 @@
 .tg .tg-yw4l {
     vertical-align: top
 }
+td.red {
+    background: red;
+    color: white;
+    font-weight: bold;
+}
+td.green {
+    background:green;
+    color:white;
+    font-weight: bold;
+}
+.graphsec,.fortable {
+    display:none;
+}
