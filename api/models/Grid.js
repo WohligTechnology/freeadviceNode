@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+    
     save: function (data, callback) {
 
         sails.query(function (err, db) {
@@ -398,7 +399,7 @@ module.exports = {
                 });
             }
             if (db) {
-                
+
                 db.collection("grid").find({
                     path: data.path,
                     type: data.type
@@ -435,12 +436,12 @@ module.exports = {
                 });
             }
             if (db) {
-                
+
                 db.collection("grid").find({
                     type: data.type
                 }).sort({
                     "tenure": 1,
-                    "path":1
+                    "path": 1
                 }).toArray(function (err, data2) {
                     if (err) {
                         console.log(err);

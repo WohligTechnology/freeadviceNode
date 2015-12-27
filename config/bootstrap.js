@@ -24,6 +24,8 @@ module.exports.bootstrap = function (cb) {
         sails.mime = require('mime'),
         sails.moment = require('moment'),
         sails.fs = require('fs'),
+        sails.xlsxj = require('xlsx-to-json'),
+        sails.xlsx = require('xlsx'),
         // Connection URL
         sails.url = 'mongodb://localhost:27017/freeadvice';
     sails.query = function (myfunc) {

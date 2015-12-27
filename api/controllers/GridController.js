@@ -6,6 +6,154 @@
  */
 
 module.exports = {
+    excelobject: function (req, res) {
+        sails.query(function (err, db) {
+            if (err) {
+                console.log(err);
+            }
+            if (db) {
+                db.open(function (err, db) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    if (db) {
+                        res.connection.setTimeout(200000);
+                        req.connection.setTimeout(200000);
+                        var extension = "";
+                        var excelimages = [];
+                        req.file("file").upload({
+                            maxBytes: 10000000000000000
+                        }, function (err, uploadedFiles) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            _.each(uploadedFiles, function (n) {
+                                writedata = n.fd;
+                                excelcall(writedata);
+                            });
+                        });
+
+                        function excelcall(datapath) {
+                            var outputpath = "./.tmp/output.json";
+                            sails.xlsxj({
+                                input: datapath,
+                                output: outputpath
+                            }, function (err, result) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                                if (result) {
+                                    console.log("in excel");
+                                    console.log(result);
+                                    sails.fs.unlink(datapath, function (data) {
+                                        if (data) {
+                                            sails.fs.unlink(outputpath, function (data2) {});
+                                        }
+                                    });
+
+                                    function createteam(num) {
+                                        m = result[num];
+
+                                        /*  Grid.save(m, function (respo) {
+                                              if (respo.value && respo.value == true) {
+                                                  console.log(num);
+                                                  num++;
+                                                  if (num < result.length) {
+                                                      setTimeout(function () {
+                                                          createteam(num);
+                                                      }, 15);
+                                                  } else {
+                                                      res.json("Done");
+                                                  }
+                                              }
+                                          });*/
+                                    }
+                                    createteam(0);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    },
+    excelobject2: function (req, res) {
+        sails.query(function (err, db) {
+            if (err) {
+                console.log(err);
+            }
+            if (db) {
+                db.open(function (err, db) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    if (db) {
+                        res.connection.setTimeout(200000);
+                        req.connection.setTimeout(200000);
+                        var extension = "";
+                        var excelimages = [];
+                        req.file("file").upload({
+                            maxBytes: 10000000000000000
+                        }, function (err, uploadedFiles) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            _.each(uploadedFiles, function (n) {
+                                writedata = n.fd;
+                                excelcall(writedata);
+                            });
+                        });
+
+                        function excelcall(datapath) {
+                            var workbook = sails.xlsx.readFile(datapath);
+                            var traverse = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //space added for single cases
+                            var char1 = 3;
+                            var char2 = 0;
+                            var ten = 1;
+                            var currentColumn = traverse[char1] + traverse[char2];
+                            var skip = false;
+
+                            for (var ch1 = 0; ch1 < 27; ch1++) {
+                                for (var ch2 = 1; ch2 < 27; ch2++) {
+                                    currentColumn = traverse[ch1] + traverse[ch2];
+                                    if (currentColumn == " A" || currentColumn == " B") {
+
+                                        skip = true;
+                                        continue;
+                                    } else if (workbook.Sheets.Sheet1[currentColumn.trim() + 4] == undefined) {
+                                        skip = true;
+                                        continue;
+
+                                    } else {
+                                        skip = false;
+                                        var bulk = db.collection('grid').initializeOrderedBulkOp();
+
+                                        console.log(currentColumn);
+                                        for (var i = 3; workbook.Sheets.Sheet1[currentColumn.trim() + i] != undefined; i++) {
+                                            bulk.insert({
+                                                tenure: ten,
+                                                path: i - 2,
+                                                value: Math.floor(workbook.Sheets.Sheet1[currentColumn.trim() + i].v * 100),
+                                                type:req.body.type
+                                            });
+                                            console.log(ten + " " + i);
+                                        }
+                                        bulk.execute();
+                                        ten++;
+                                    }
+                                }
+                            }
+
+
+
+                            db.close();
+                            res.json("done");
+                        }
+                    }
+                });
+            }
+        });
+    },
     save: function (req, res) {
         if (req.body) {
             if (req.body._id) {
@@ -65,7 +213,7 @@ module.exports = {
         function callback(data) {
             res.json(data);
         };
-            Grid.generateData(req.body, callback);
+        Grid.generateData(req.body, callback);
     },
     generateDataByType: function (req, res) {
         function callback(data) {
