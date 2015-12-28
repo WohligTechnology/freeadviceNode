@@ -78,6 +78,7 @@ module.exports = {
         });
     },
     excelobject2: function (req, res) {
+        var count=0;
         sails.query(function (err, db) {
             if (err) {
                 console.log(err);
@@ -112,15 +113,12 @@ module.exports = {
                             var ten = 1;
                             var currentColumn = traverse[char1] + traverse[char2];
                             var skip = false;
-
+                            var split = parseInt(req.body.start);
+                            var type= req.body.type;
                             for (var ch1 = 0; ch1 < 27; ch1++) {
                                 for (var ch2 = 1; ch2 < 27; ch2++) {
                                     currentColumn = traverse[ch1] + traverse[ch2];
-                                    if (currentColumn == " A" || currentColumn == " B") {
-
-                                        skip = true;
-                                        continue;
-                                    } else if (workbook.Sheets.Sheet1[currentColumn.trim() + 4] == undefined) {
+                                    if (workbook.Sheets.Sheet1[currentColumn.trim() + 4] == undefined) {
                                         skip = true;
                                         continue;
 
@@ -128,15 +126,14 @@ module.exports = {
                                         skip = false;
                                         var bulk = db.collection('grid').initializeOrderedBulkOp();
 
-                                        console.log(currentColumn);
-                                        for (var i = 3; workbook.Sheets.Sheet1[currentColumn.trim() + i] != undefined; i++) {
+                                        for (var i = 1; workbook.Sheets.Sheet1[currentColumn.trim() + i] != undefined; i++) {
                                             bulk.insert({
                                                 tenure: ten,
-                                                path: i - 2,
+                                                path: split + i,
                                                 value: Math.floor(workbook.Sheets.Sheet1[currentColumn.trim() + i].v * 100),
-                                                type:req.body.type
+                                                type: type  
                                             });
-                                            console.log(ten + " " + i);
+                                            count++;
                                         }
                                         bulk.execute();
                                         ten++;
@@ -144,8 +141,8 @@ module.exports = {
                                 }
                             }
 
-
-
+                            
+                            console.log(count);
                             db.close();
                             res.json("done");
                         }
