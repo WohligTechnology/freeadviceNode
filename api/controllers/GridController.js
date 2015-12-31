@@ -133,6 +133,7 @@ module.exports = {
                                                 value: Math.floor(workbook.Sheets.Sheet1[currentColumn.trim() + i].v * 100),
                                                 type: type  
                                             });
+                                            console.log((split+i)+" "+ ten);
                                             count++;
                                         }
                                         bulk.execute();

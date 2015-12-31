@@ -210,11 +210,11 @@ module.exports = {
                 nocallback++;
                 alltypes.push(obj);
             }
-            if (nocallback == 11) {
+            if (nocallback == 1) {
                 callCallback();
             }
         }
-        for (var i = 0; i <= 10; i++) {
+        for (var i = 0; i <= 0; i++) {
             data.type = i;
             var data1 = _.clone(data, true);
             User.generateAllPathTenure(data1, cashflow, onReturn);
@@ -238,7 +238,7 @@ module.exports = {
         var count = 0;
         var nocallback = 0;
         var i = 1;
-        var totalpath = 99;
+        var totalpath = 950;
 
         function onReturn(resp) {
             if (resp) {
@@ -325,7 +325,7 @@ module.exports = {
             var cashflow = [];
             User.generateCashflow(data, cashflow);
         }
-        var totalpath = 99;
+        var totalpath = 950;
         var paths = [];
         for (var i = 0; i < totalpath; i++) {
             paths[i] = {
