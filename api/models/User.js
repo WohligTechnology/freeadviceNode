@@ -224,7 +224,8 @@ module.exports = {
             alltypes = _.sortBy(alltypes, function (n) {
                 return n.type;
             });
-            callback(alltypes);
+            callback({alltypes:alltypes,
+            cashflow:cashflow});
         }
     },
     allpath: function (data, cashflow, callback) {

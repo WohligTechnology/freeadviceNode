@@ -48,11 +48,11 @@
                 </div>
                 <div class="form-group">
                     <label for="Inflation">Short-Term Volatility</label>
-                    <input type="number" value="2" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
+                    <input type="number" value="10" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
                 </div>
                 <div class="form-group">
                     <label for="StartMonth">Long-Term Volatility</label>
-                    <input type="number" value="2" class="form-control" id="longterm" placeholder="Long-Term Volatility">
+                    <input type="number" value="10" class="form-control" id="longterm" placeholder="Long-Term Volatility">
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
             </form>
@@ -203,7 +203,8 @@
                         return n.type;
                     });
                     console.log(data);
-                    _.each(data, function (key) {
+                    _.each(data[0], function (key) {
+                      console.log(key);
                         firstArr = key.tenure.slice(1);
                         var median1 = _.pluck(firstArr, "median1");
                         var median50 = _.pluck(firstArr, "median50");
@@ -245,7 +246,7 @@
                     document.getElementById("long").innerHTML = feasible[0].long;
                     $(".container.fortable").show();
                     $(".graphsec").show();
-                    createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type);
+                    createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type,data[1]);
                 },
                 contentType: 'application/json',
                 dataType: 'json'

@@ -1,8 +1,8 @@
-function createGraph(tenure, median1, median50, median99,type) {
-    
+function createGraph(tenure, median1, median50, median99,type,cashflow) {
+
     $('#container').highcharts({
         credits: {
-            enabled: false  
+            enabled: false
         },
         title: {
             text: 'Type '+type,
@@ -46,6 +46,10 @@ function createGraph(tenure, median1, median50, median99,type) {
         }, {
             name: 'Median 99',
             data: median99
+        },{
+          type:'column',
+          name:'Cashflow',
+          data:cashflow
         }]
     });
 }
