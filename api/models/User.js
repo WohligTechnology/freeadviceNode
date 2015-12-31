@@ -210,11 +210,11 @@ module.exports = {
                 nocallback++;
                 alltypes.push(obj);
             }
-            if (nocallback == 1) {
+            if (nocallback == 11) {
                 callCallback();
             }
         }
-        for (var i = 0; i <= 0; i++) {
+        for (var i = 0; i <= 10; i++) {
             data.type = i;
             var data1 = _.clone(data, true);
             User.generateAllPathTenure(data1, cashflow, onReturn);
@@ -392,8 +392,8 @@ module.exports = {
                 }
 
             }
-            
-            console.log(tenure.length);
+
+            console.log(tenure);
             callback(tenure,typeno);
         })
 

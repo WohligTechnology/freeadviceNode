@@ -218,7 +218,7 @@
                         goals[i] = firstArr[0].goalchance.toFixed(2);
                         long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
                         console.log(goals[i] + " " + shortinput + " " + longinput)
-                        if (goals[i] > minimumGoal && short[i] > shortinput && long[i] > longinput) {
+                        if (goals[i] > minimumGoal && -short[i] > -shortinput && -long[i] > -longinput) {
                             feasible.push({
                                 type: i,
                                 tenures: tenures,
@@ -234,8 +234,8 @@
                     });
                     for (var i = 0; i < 11; i++) {
                         addGreenRed("g" + i, goals[i], minimumGoal);
-                        addGreenRed("s" + i, short[i], shortinput);
-                        addGreenRed("l" + i, long[i], longinput);
+                        addGreenRed("s" + i, -short[i], -shortinput);
+                        addGreenRed("l" + i, -long[i], -longinput);
 
                         $("#s" + i).html(short[i]);
                         $("#l" + i).html(long[i]);

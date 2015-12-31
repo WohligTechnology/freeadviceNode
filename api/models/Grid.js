@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-    
+
     save: function (data, callback) {
 
         sails.query(function (err, db) {
@@ -439,7 +439,7 @@ module.exports = {
 
                 db.collection("grid").find({
                     type: data.type
-                }).toArray(function (err, data2) {
+                }).limit(60100).toArray(function (err, data2) {
                     if (err) {
                         console.log(err);
                         callback({

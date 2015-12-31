@@ -57,7 +57,7 @@ module.exports = {
     compute: function (req, res) {
         function callback(data) {
             res.json(data);
-        };
+        }
         User.compute(req.body, false, callback);
     },
     generateCashflow: function (req, res) {
@@ -68,25 +68,28 @@ module.exports = {
     generateAllPathTenure: function (req, res) {
         function callback(data) {
             res.json(data);
-        };
+        }
         User.generateAllPathTenure(req.body, callback);
     },
     alltypes: function (req, res) {
         function callback(data) {
             res.json(data);
-        };
+        }
         User.alltypes(req.body, callback);
     },
     alltypes2: function (req, res) {
+
+        res.connection.setTimeout(1000000000);
+        res.connection.setTimeout(1000000000);
         function callback(data) {
             res.json(data);
-        };
+        }
         User.alltypes2(req.body, callback);
     },
     alltypes3: function (req, res) {
         function callback(data) {
             res.json(data);
-        };
+        }
         User.alltypes2({
             "lumpsum": 100000,
             "monthly": 15000,
