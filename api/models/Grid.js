@@ -8,7 +8,6 @@
 module.exports = {
 
     save: function (data, callback) {
-
         sails.query(function (err, db) {
             if (err) {
                 Grid.save(data, function () {

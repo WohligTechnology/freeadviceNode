@@ -118,6 +118,7 @@ module.exports = {
         });
     },
     find: function (data, callback) {
+        //        console.log(sails.finance.PV());
         sails.query(function (err, db) {
             if (err) {
                 console.log(err);
@@ -204,9 +205,12 @@ module.exports = {
         var type = 0;
         var alltypes = [];
 
-        function onReturn(resp,type) {
+        function onReturn(resp, type) {
             if (resp) {
-                var obj = {type: type,tenure: resp};
+                var obj = {
+                    type: type,
+                    tenure: resp
+                };
                 nocallback++;
                 alltypes.push(obj);
             }
@@ -224,8 +228,59 @@ module.exports = {
             alltypes = _.sortBy(alltypes, function (n) {
                 return n.type;
             });
-            callback({alltypes:alltypes,
-            cashflow:cashflow});
+            var firstArr = [];
+            var feasible = [];
+            var goals = [];
+            var short = [];
+            var long = [];
+            var i = 0;
+            _.each(alltypes, function (key) {
+                firstArr = key.tenure.slice(1);
+                console.log(firstArr);
+                var median1 = _.pluck(firstArr, "median1");
+                var median50 = _.pluck(firstArr, "median50");
+                var median99 = _.pluck(firstArr, "median99");
+                var tenures = _.pluck(firstArr, "tenureNo");
+                var percentage = _.pluck(firstArr, "percentage");
+                percentage = percentage.slice(0, 12);
+                percentage = _.sortBy(percentage, function (n) {
+                    return n;
+                });
+                console.log(percentage);
+                short[i] = percentage[0].toFixed(2);
+                goals[i] = firstArr[0].goalchance.toFixed(2);
+                long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+                if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
+                    feasible.push({
+                        type: i,
+                        tenures: tenures,
+                        median1: median1,
+                        median50: median50,
+                        median99: median99,
+                        short: short[i],
+                        goal: goals[i],
+                        long: long[i]
+                    });
+                }
+                i++;
+            });
+            if (feasible.length == 0) {
+                callback({
+                    value: false,
+                    short: short,
+                    goals: goals,
+                    long: long
+                });
+            } else {
+                callback({
+                    value: true,
+                    short: short,
+                    goals: goals,
+                    long: long,
+                    feasible: feasible,
+                    cashflow: cashflow
+                });
+            }
         }
     },
     allpath: function (data, cashflow, callback) {
@@ -312,7 +367,7 @@ module.exports = {
     generateAllPathTenure: function (data, cashflow, callback) {
         var typeno = data.type;
         var pathvalgrid = [];
-        var goalcount=0;
+        var goalcount = 0;
         var pathtemp = [];
         _.each(cashflow, function () {
             pathvalgrid.push([]);
@@ -380,7 +435,7 @@ module.exports = {
                     median50: pathvaltemp[med50key],
                     median99: pathvaltemp[med99key],
                     pathlength: pathvaltemp.length,
-                    goalchance: 100 - ((goalcount/totalpath)*100)
+                    goalchance: 100 - ((goalcount / totalpath) * 100)
                 });
                 if (i == 0) {
                     tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, cashflow[0]);
@@ -393,9 +448,7 @@ module.exports = {
                 }
 
             }
-
-            console.log(tenure);
-            callback(tenure,typeno);
+            callback(tenure, typeno);
         })
 
 

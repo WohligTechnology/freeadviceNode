@@ -26,6 +26,7 @@ module.exports.bootstrap = function (cb) {
         sails.fs = require('fs'),
         sails.xlsxj = require('xlsx-to-json'),
         sails.xlsx = require('xlsx'),
+        sails.finance = require('node-finance'),
         // Connection URL
         sails.url = 'mongodb://localhost:27017/freeadvice';
     sails.query = function (myfunc) {

@@ -202,51 +202,50 @@
                     data = _.sortBy(data, function (n) {
                         return n.type;
                     });
-                    console.log(data);
-                    _.each(data[0], function (key) {
-                      console.log(key);
-                        firstArr = key.tenure.slice(1);
-                        var median1 = _.pluck(firstArr, "median1");
-                        var median50 = _.pluck(firstArr, "median50");
-                        var median99 = _.pluck(firstArr, "median99");
-                        var tenures = _.pluck(firstArr, "tenureNo");
-                        var percentage = _.pluck(firstArr, "percentage");
-                        percentage = percentage.slice(0, 12);
-                        percentage = _.sortBy(percentage, function (n) {
-                            return n;
-                        });
-                        short[i] = percentage[0].toFixed(2);
-                        goals[i] = firstArr[0].goalchance.toFixed(2);
-                        long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
-                        console.log(goals[i] + " " + shortinput + " " + longinput)
-                        if (goals[i] > minimumGoal && -short[i] > -shortinput && -long[i] > -longinput) {
-                            feasible.push({
-                                type: i,
-                                tenures: tenures,
-                                median1: median1,
-                                median50: median50,
-                                median99: median99,
-                                short: short[i],
-                                goal: goals[i],
-                                long: long[i]
-                            });
-                        }
-                        i++;
-                    });
+//                    _.each(data[0], function (key) {
+//                      console.log(key);
+//                        firstArr = key.tenure.slice(1);
+//                        var median1 = _.pluck(firstArr, "median1");
+//                        var median50 = _.pluck(firstArr, "median50");
+//                        var median99 = _.pluck(firstArr, "median99");
+//                        var tenures = _.pluck(firstArr, "tenureNo");
+//                        var percentage = _.pluck(firstArr, "percentage");
+//                        percentage = percentage.slice(0, 12);
+//                        percentage = _.sortBy(percentage, function (n) {
+//                            return n;
+//                        });
+//                        short[i] = percentage[0].toFixed(2);
+//                        goals[i] = firstArr[0].goalchance.toFixed(2);
+//                        long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+//                        console.log(goals[i] + " " + shortinput + " " + longinput)
+//                        if (goals[i] > minimumGoal && -short[i] > -shortinput && -long[i] > -longinput) {
+//                            feasible.push({
+//                                type: i,
+//                                tenures: tenures,
+//                                median1: median1,
+//                                median50: median50,
+//                                median99: median99,
+//                                short: short[i],
+//                                goal: goals[i],
+//                                long: long[i]
+//                            });
+//                        }
+//                        i++;
+//                    });
                     for (var i = 0; i < 11; i++) {
-                        addGreenRed("g" + i, goals[i], minimumGoal);
-                        addGreenRed("s" + i, -short[i], -shortinput);
-                        addGreenRed("l" + i, -long[i], -longinput);
+                        addGreenRed("g" + i, data.goals[i], minimumGoal);
+                        addGreenRed("s" + i, -data.short[i], -shortinput);
+                        addGreenRed("l" + i, -data.long[i], -longinput);
 
-                        $("#s" + i).html(short[i]);
-                        $("#l" + i).html(long[i]);
+                        $("#s" + i).html(data.short[i]);
+                        $("#l" + i).html(data.long[i]);
                     }
-                    document.getElementById("percent").innerHTML = feasible[0].short;
-                    document.getElementById("goal").innerHTML = feasible[0].goal;
-                    document.getElementById("long").innerHTML = feasible[0].long;
+                    document.getElementById("percent").innerHTML = data.feasible[0].short;
+                    document.getElementById("goal").innerHTML = data.feasible[0].goal;
+                    document.getElementById("long").innerHTML = data.feasible[0].long;
                     $(".container.fortable").show();
                     $(".graphsec").show();
-                    createGraph(feasible[0].tenures, feasible[0].median1, feasible[0].median50, feasible[0].median99, feasible[0].type,data[1]);
+                    createGraph(data.feasible[0].tenures, data.feasible[0].median1, data.feasible[0].median50, data.feasible[0].median99, data.feasible[0].type,data.cashflow);
                 },
                 contentType: 'application/json',
                 dataType: 'json'
