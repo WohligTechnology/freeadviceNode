@@ -179,7 +179,9 @@
                 startMonth: parseInt(document.getElementById("StartMonth").value),
                 noOfInstallment: parseInt(document.getElementById("RequiredInstallment").value),
                 installment: parseInt(document.getElementById("Installment").value),
-                inflation: parseInt(document.getElementById("Inflation").value)
+                inflation: parseInt(document.getElementById("Inflation").value),
+                shortinput:parseInt(document.getElementById("shortterm").value),
+                longinput:parseInt(document.getElementById("longterm").value)
             };
             console.log($data);
             var feasible = [];
@@ -199,9 +201,6 @@
                 data: JSON.stringify($data),
                 success: function (data) {
                     var i = 0;
-                    data = _.sortBy(data, function (n) {
-                        return n.type;
-                    });
 //                    _.each(data[0], function (key) {
 //                      console.log(key);
 //                        firstArr = key.tenure.slice(1);
@@ -232,6 +231,7 @@
 //                        }
 //                        i++;
 //                    });
+console.log(data.goals);
                     for (var i = 0; i < 11; i++) {
                         addGreenRed("g" + i, data.goals[i], minimumGoal);
                         addGreenRed("s" + i, -data.short[i], -shortinput);
@@ -240,13 +240,23 @@
                         $("#s" + i).html(data.short[i]);
                         $("#l" + i).html(data.long[i]);
                     }
-                    document.getElementById("percent").innerHTML = data.feasible[0].short;
-                    document.getElementById("goal").innerHTML = data.feasible[0].goal;
-                    document.getElementById("long").innerHTML = data.feasible[0].long;
-                    $(".container.fortable").show();
-                    $(".graphsec").show();
-                    createGraph(data.feasible[0].tenures, data.feasible[0].median1, data.feasible[0].median50, data.feasible[0].median99, data.feasible[0].type,data.cashflow);
-                },
+                    if(data.value){
+                      document.getElementById("percent").innerHTML = data.feasible[0].short;
+                      document.getElementById("goal").innerHTML = data.feasible[0].goal;
+                      document.getElementById("long").innerHTML = data.feasible[0].long;
+                      $(".container.fortable").show();
+                      $(".graphsec").show();
+                      createGraph(data.feasible[0].tenures, data.feasible[0].median1, data.feasible[0].median50, data.feasible[0].median99, data.feasible[0].type,data.cashflow);
+
+                    }else{
+                      document.getElementById("percent").innerHTML = 0;
+                      document.getElementById("goal").innerHTML = 0;
+                      document.getElementById("long").innerHTML = 0;
+
+                      $(".container.fortable").show();
+                      $(".graphsec").show();
+                    }
+                    },
                 contentType: 'application/json',
                 dataType: 'json'
             });
