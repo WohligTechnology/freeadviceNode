@@ -438,7 +438,7 @@ module.exports = {
 
                 db.collection("grid").find({
                     type: data.type
-                }).limit(60100).toArray(function (err, data2) {
+                }).limit(95000).toArray(function (err, data2) {
                     if (err) {
                         console.log(err);
                         callback({
