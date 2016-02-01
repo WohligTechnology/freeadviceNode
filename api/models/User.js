@@ -199,6 +199,9 @@ module.exports = {
 
     },
     alltypes2: function (data, callback) {
+
+
+
         var cashflow = [];
         User.generateCashflow(data, cashflow);
         var nocallback = 0;
@@ -206,6 +209,10 @@ module.exports = {
         var alltypes = [];
 
         function onReturn(resp, type) {
+          if(nocallback==1)
+          {
+            console.log(resp);
+          }
             if (resp) {
                 var obj = {
                     type: type,
@@ -236,7 +243,7 @@ module.exports = {
             var i = 0;
             _.each(alltypes, function (key) {
                 firstArr = key.tenure.slice(1);
-                console.log(firstArr);
+                // console.log(firstArr);
                 var median1 = _.pluck(firstArr, "median1");
                 var median50 = _.pluck(firstArr, "median50");
                 var median99 = _.pluck(firstArr, "median99");
@@ -246,10 +253,12 @@ module.exports = {
                 percentage = _.sortBy(percentage, function (n) {
                     return n;
                 });
-                console.log(percentage);
+                // console.log(percentage);
                 short[i] = percentage[0].toFixed(2);
                 goals[i] = firstArr[0].goalchance.toFixed(2);
                 long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+                short[i] = (100-short[i]).toFixed(2);
+                long[i] = (100 - long[i]).toFixed(2);
                 if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
                     feasible.push({
                         type: i,
@@ -424,7 +433,7 @@ module.exports = {
             var med50key = Math.ceil((totalpath - 1) / 2);
             var med99key = Math.ceil(99 * (totalpath - 1) / 100);
             for (var i = 0; i < cashflow.length; i++) {
-                var pathvaltemp = pathvalgrid[i];
+                pathvaltemp = pathvalgrid[i];
                 pathvaltemp = _.sortBy(pathvaltemp, function (key) {
                     return key;
                 });
@@ -437,19 +446,19 @@ module.exports = {
                     pathlength: pathvaltemp.length,
                     goalchance: 100 - ((goalcount / totalpath) * 100)
                 });
-                if (i == 0) {
-                    tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, cashflow[0]);
+                if (i === 0) {
+                    tenure[i].percentage = User.calcLongValue(cashflow, i + 1, cashflow[0]);
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = cashflow[0];
                 } else {
-                    tenure[i].percentage = 100 - User.calcLongValue(cashflow, i + 1, tenure[i].median1);
+                    tenure[i].percentage = User.calcLongValue(cashflow, i + 1, tenure[i].median1);
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = tenure[i].median1;
                 }
 
             }
             callback(tenure, typeno);
-        })
+        });
 
 
 
