@@ -1,5 +1,9 @@
 function createGraph(tenure, median1, median50, median99,type,cashflow) {
-
+  median1.unshift(cashflow[0]);
+  median50.unshift(cashflow[0]);
+  median99.unshift(cashflow[0]);
+  console.log(median1);
+  console.log(median50);
     $('#container').highcharts({
         credits: {
             enabled: false
