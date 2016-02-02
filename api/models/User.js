@@ -209,10 +209,6 @@ module.exports = {
         var alltypes = [];
 
         function onReturn(resp, type) {
-          if(nocallback==1)
-          {
-            console.log(resp);
-          }
             if (resp) {
                 var obj = {
                     type: type,
@@ -249,6 +245,8 @@ module.exports = {
                 var median99 = _.pluck(firstArr, "median99");
                 var tenures = _.pluck(firstArr, "tenureNo");
                 var percentage = _.pluck(firstArr, "percentage");
+                var longpercent = _.pluck(firstArr, "longpercent");
+                console.log(longpercent);
                 percentage = percentage.slice(0, 12);
                 percentage = _.sortBy(percentage, function (n) {
                     return n;
@@ -256,7 +254,10 @@ module.exports = {
                 // console.log(percentage);
                 short[i] = percentage[0].toFixed(2);
                 goals[i] = firstArr[0].goalchance.toFixed(2);
-                long[i] = firstArr[firstArr[0].ith - 1].percentage.toFixed(2);
+                long[i]=_.find(longpercent, function(o) { return o != 100; });
+                if(long[i]== undefined || long[i]== null){
+                  long[i]=100;
+                }
                 short[i] = (100-short[i]).toFixed(2);
                 long[i] = (100 - long[i]).toFixed(2);
                 if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
@@ -340,7 +341,6 @@ module.exports = {
                 goalchance: Math.round(((totalpath - count) / totalpath) * 100)
             });
         }
-
     },
     compute: function (data, cashflow, callback) {
         if (!cashflow) {
@@ -432,6 +432,7 @@ module.exports = {
             var med1key = Math.ceil((totalpath - 1) / 100);
             var med50key = Math.ceil((totalpath - 1) / 2);
             var med99key = Math.ceil(99 * (totalpath - 1) / 100);
+            var foundLast = false;
             for (var i = 0; i < cashflow.length; i++) {
                 pathvaltemp = pathvalgrid[i];
                 pathvaltemp = _.sortBy(pathvaltemp, function (key) {
@@ -454,6 +455,19 @@ module.exports = {
                     tenure[i].percentage = User.calcLongValue(cashflow, i + 1, tenure[i].median1);
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = tenure[i].median1;
+                    if(!foundLast && tenure[i].lastone ==0 ){
+                      foundLast = true;
+                      tenure[i].longpercent=tenure[i].percentage;
+                    }else if(!foundLast && i == (cashflow.length-1) ){
+                      foundLast=true;
+                      console.log("hereradsaiodjsajcoijacoijd");
+                      tenure[i].longpercent=tenure[i].percentage;
+                    }else{
+                      tenure[i].longpercent=100;
+                    }
+                }
+                if(foundLast===false ){
+                  tenure[i].longpercent=100;
                 }
 
             }
@@ -464,7 +478,6 @@ module.exports = {
 
     },
     calcLongValue: function (cashflow, currentmonth, lastamount) {
-
         var cashflowtill = cashflow.slice(0, currentmonth);
         var posValue = 0;
         _.each(cashflowtill, function (n) {
