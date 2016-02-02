@@ -203,7 +203,18 @@ module.exports = {
 
 
         var cashflow = [];
+        var dates = [];
         User.generateCashflow(data, cashflow);
+        var month;
+        month = new Date();
+        for(var i =0 ; i<cashflow.length;i++){
+
+          var temp = month.setMonth(month.getMonth() + 1);
+          dates.push(temp);
+          console.log((i+1)+" "+new Date(temp));
+        }
+
+         new Date("2015-03-25")
         var nocallback = 0;
         var type = 0;
         var alltypes = [];
@@ -246,7 +257,6 @@ module.exports = {
                 var tenures = _.pluck(firstArr, "tenureNo");
                 var percentage = _.pluck(firstArr, "percentage");
                 var longpercent = _.pluck(firstArr, "longpercent");
-                console.log(longpercent);
                 percentage = percentage.slice(0, 12);
                 percentage = _.sortBy(percentage, function (n) {
                     return n;
@@ -261,6 +271,9 @@ module.exports = {
                 short[i] = (100-short[i]).toFixed(2);
                 long[i] = (100 - long[i]).toFixed(2);
                 if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
+
+                var xirr = User.XIRR(cashflow,dates)*100;
+                var monthlyxirr = parseDouble(Math.pow(1+xirr,(1/12)))-1;
                     feasible.push({
                         type: i,
                         tenures: tenures,
@@ -269,7 +282,8 @@ module.exports = {
                         median99: median99,
                         short: short[i],
                         goal: goals[i],
-                        long: long[i]
+                        long: long[i],
+                        monthlyxirr:monthlyxirr
                     });
                 }
                 i++;
@@ -460,7 +474,6 @@ module.exports = {
                       tenure[i].longpercent=tenure[i].percentage;
                     }else if(!foundLast && i == (cashflow.length-1) ){
                       foundLast=true;
-                      console.log("hereradsaiodjsajcoijacoijd");
                       tenure[i].longpercent=tenure[i].percentage;
                     }else{
                       tenure[i].longpercent=100;
@@ -477,6 +490,79 @@ module.exports = {
 
 
     },
+    XNPV: function(rate, values) {
+		var xnpv = 0.0;
+		var firstDate = new Date(values[0].Date);
+		for (var key in values) {
+			var tmp = values[key];
+			var value = tmp.Flow;
+			var date = new Date(tmp.Date);
+			xnpv += value / Math.pow(1 + rate, this.DaysBetween(firstDate, date)/365);
+		};
+		return xnpv;
+	},
+   XIRR: function(values, dates, guess) {
+// Credits: algorithm inspired by Apache OpenOffice
+
+// Calculates the resulting amount
+var irrResult = function(values, dates, rate) {
+  var r = rate + 1;
+  var result = values[0];
+  for (var i = 1; i < values.length; i++) {
+    result += values[i] / Math.pow(r, moment(dates[i]).diff(moment(dates[0]), 'days') / 365);
+  }
+  return result;
+}
+
+// Calculates the first derivation
+var irrResultDeriv = function(values, dates, rate) {
+  var r = rate + 1;
+  var result = 0;
+  for (var i = 1; i < values.length; i++) {
+    var frac = moment(dates[i]).diff(moment(dates[0]), 'days') / 365;
+    result -= frac * values[i] / Math.pow(r, frac + 1);
+  }
+  return result;
+}
+
+// Check that values contains at least one positive value and one negative value
+var positive = false;
+var negative = false;
+for (var i = 0; i < values.length; i++) {
+  if (values[i] > 0) positive = true;
+  if (values[i] < 0) negative = true;
+}
+
+// Return error if values does not contain at least one positive value and one negative value
+if (!positive || !negative) return '#NUM!';
+
+// Initialize guess and resultRate
+var guess = (typeof guess === 'undefined') ? 0.1 : guess;
+var resultRate = guess;
+
+// Set maximum epsilon for end of iteration
+var epsMax = 1e-10;
+
+// Set maximum number of iterations
+var iterMax = 50;
+
+// Implement Newton's method
+var newRate, epsRate, resultValue;
+var iteration = 0;
+var contLoop = true;
+do {
+  resultValue = irrResult(values, dates, resultRate);
+  newRate = resultRate - resultValue / irrResultDeriv(values, dates, resultRate);
+  epsRate = Math.abs(newRate - resultRate);
+  resultRate = newRate;
+  contLoop = (epsRate > epsMax) && (Math.abs(resultValue) > epsMax);
+} while(contLoop && (++iteration < iterMax));
+
+if(contLoop) return '#NUM!';
+
+// Return internal rate of return
+return resultRate;
+},
     calcLongValue: function (cashflow, currentmonth, lastamount) {
         var cashflowtill = cashflow.slice(0, currentmonth);
         var posValue = 0;
