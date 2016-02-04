@@ -271,9 +271,8 @@ module.exports = {
                 short[i] = (100-short[i]).toFixed(2);
                 long[i] = (100 - long[i]).toFixed(2);
                 if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
-
                 var xirr = User.XIRR(cashflow,dates)*100;
-                var monthlyxirr = parseDouble(Math.pow(1+xirr,(1/12)))-1;
+                var requiredRate = Math.pow(parseFloat(Math.abs(1+xirr/100)),parseFloat((1/12)))-1;
                     feasible.push({
                         type: i,
                         tenures: tenures,
@@ -283,7 +282,7 @@ module.exports = {
                         short: short[i],
                         goal: goals[i],
                         long: long[i],
-                        monthlyxirr:monthlyxirr
+                        requiredRate:requiredRate
                     });
                 }
                 i++;
@@ -434,9 +433,10 @@ module.exports = {
                         ++goalcount;
                         paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
                         paths[i].pathVal = 0;
-                        for (j = tenure; j < cashflow.length; j++) {
-                            pathvalgrid[j][i] = 0;
-                        }
+                        // for (j = tenure; j < cashflow.length; j++) {
+                        //     pathvalgrid[j][i] = 0;
+                        // }
+                        pathvalgrid[tenure][i]=newPath;
                     }
                     paths[i].pathValArr.push(paths[i].pathVal);
                 }
@@ -470,9 +470,13 @@ module.exports = {
                     tenure[i].ith = i + 1;
                     tenure[i].lastone = tenure[i].median1;
                     if(!foundLast && tenure[i].lastone ==0 ){
+                      tenure[i].lastMed50=tenure[i].median50;
+                      tenure[i].cashflowLast=cashflow[i];
                       foundLast = true;
                       tenure[i].longpercent=tenure[i].percentage;
                     }else if(!foundLast && i == (cashflow.length-1) ){
+                      tenure[i].lastMed50=tenure[i].median50;
+                      tenure[i].cashflowLast=cashflow[i];
                       foundLast=true;
                       tenure[i].longpercent=tenure[i].percentage;
                     }else{
