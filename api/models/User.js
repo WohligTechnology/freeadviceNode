@@ -244,7 +244,10 @@ module.exports = {
       });
       var firstArr = [];
       var feasible = [];
+      var partialFeasible = [];
       var goals = [];
+      var targetXirr;
+      var targetRate;
       var short = [];
       var long = [];
       var i = 0;
@@ -273,18 +276,8 @@ module.exports = {
         }
         short[i] = (100 - short[i]).toFixed(2);
         long[i] = (100 - long[i]).toFixed(2);
-        if (goals[i] > 50 && -short[i] > -data.shortinput && -long[i] > -data.longinput) {
-          targetCashflow = [];
-
-          targetCashflow = _.cloneDeep(cashflow);
-          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + median50[median50.length - 1];
-          console.log(targetCashflow);
-
-          var targetXirr = User.XIRR(targetCashflow, dates) * 100;
-          console.log(targetXirr);
-          var targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-          console.log(targetRate);
-          feasible.push({
+        if( -short[i] > -data.shortinput && -long[i] > -data.longinput){
+          partialFeasible.push({
             type: i,
             tenures: tenures,
             median1: median1,
@@ -292,46 +285,85 @@ module.exports = {
             median99: median99,
             short: short[i],
             goal: goals[i],
-            long: long[i],
-            requiredInstallmentPresentValue: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow, callback),
-            requiredLumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow, callback),
-            requiredMonthyContri: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow, callback),
-            requiredInstallmentNo: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow, callback),
-            requiredMonthlyContriNo: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow, callback),
-            requiredStartMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow, callback)
+            long: long[i]
           });
+          if (goals[i] > 50 ) {
+
+            feasible.push({
+              type: i,
+              tenures: tenures,
+              median1: median1,
+              median50: median50,
+              median99: median99,
+              short: short[i],
+              goal: goals[i],
+              long: long[i]
+            });
+          }
         }
+
         i++;
       });
       if (feasible.length == 0) {
+        targetCashflow = [];
+
+        targetCashflow = _.cloneDeep(cashflow);
+        targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length-1].median50[partialFeasible[partialFeasible.length-1].median50.length - 1];
+
+         targetXirr = User.XIRR(targetCashflow, dates) * 100;
+         targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
         callback({
           value: false,
           short: short,
           goals: goals,
-          long: long
+          long: long,
+          requiredInstallmentPresentValue: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+          requiredLumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+          requiredMonthyContri: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+          requiredInstallmentNo: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+          requiredMonthlyContriNo: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+          requiredStartMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
         });
       } else {
-        callback({
-          value: true,
-          short: short,
-          goals: goals,
-          long: long,
-          feasible: feasible,
-          cashflow: cashflow
-        });
+        if(feasible.length==1){
+          callback({
+            value: true,
+            short: short,
+            goals: goals,
+            long: long,
+            feasible: feasible,
+            cashflow: cashflow
+          });
+        }else{
+          targetCashflow = [];
+          targetCashflow = _.cloneDeep(cashflow);
+          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length-1].median50[feasible[feasible.length-1].median50.length - 1];
+          console.log(targetCashflow);
+           targetXirr = User.XIRR(targetCashflow, dates) * 100;
+           console.log(targetXirr);
+           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+          callback({
+            value: true,
+            short: short,
+            goals: goals,
+            long: long,
+            feasible: feasible,
+            cashflow: cashflow,
+            requiredInstallmentPresentValue: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+            requiredLumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+            requiredMonthyContri: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+            requiredInstallmentNo: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+            requiredMonthlyContriNo: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+            requiredStartMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+          });
+        }
       }
     }
   },
   suggestInstallment: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    // targetRate = targetRate * 100.0;
-    // requiredRate = requiredRate * 100.0;
-    // inflationRate = inflationRate * 100.0;
-    // targetRate = .344; //test
-    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
-    console.log(futureValInn);
+    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0)
     var futureVal = User.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0);
-    console.log(futureVal);
-    var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.installment));
+    var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment));
     var installmentDenominator = Math.pow((1 + inflationRate), (data.startMonth + 1));
     var result = (futureVal * installmentRight) / installmentDenominator;
     return Math.round(result);
@@ -343,12 +375,8 @@ module.exports = {
         fv = fv + key;
       }
     });
-    console.log(fv);
     var result = User.PV(targetRate, data.noOfMonth, data.monthly, fv, 0);
-    console.log(result);
     return Math.round(result);
-    // PV
-    // var letstrythis = User.PV
   },
   suggestMonthly: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var fv = 0;
@@ -357,9 +385,7 @@ module.exports = {
         fv = fv + key;
       }
     });
-    console.log(fv);
     var result = User.PMT(targetRate, data.noOfMonth, data.lumpsum, fv, 0);
-    console.log(result);
     return Math.round(result);
   },
   suggestRequiredInstallments: function(data, inflationRate, targetRate, requiredRate, cashflow) {
@@ -372,15 +398,17 @@ module.exports = {
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var innerFraction1=Math.pow(1+targetRate,data.noOfMonth);
     var innerFraction2=(1+Math.pow(((1+inflationRate)/(1+targetRate)),data.noOfInstallment))/(targetRate-inflationRate);
-    var denominator = User.FV(targetRate,data.noOfMonth,-data.monthly,-data.lumpsum,0);
-    var numerator = innerFraction1*datal.installment*(1+targetRate)*innerFraction2;
+    var denominator = User.FV(targetRate,data.noOfMonth,(-1)*data.monthly,(-1)*data.lumpsum,0);
+    var numerator = innerFraction1*data.installment*(1+inflationRate)*innerFraction2;
     var logterm=numerator/denominator;
+    console.log(logterm);
     var logresult = Math.log(logterm)/Math.log((1+targetRate)/(1+inflationRate));
-    return Math.round(logresult,data.noOfMonth);
+    console.log(logresult);
+    return Math.max(Math.round(logresult),data.noOfMonth);
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     // var denominator = Math.log()
-    var innerNumerator = (data.installment * Math.pow(1 + inflationRate, data.startMonth + 1)) * ((1 - Math.row((1 + inflationRate) / (1 + targetRate), data.noOfInstallment)) / (targetRate - inflationRate)) - data.lumpsum;
+    var innerNumerator = (data.installment * Math.pow(1 + inflationRate, data.startMonth + 1)) * ((1 - Math.pow((1 + inflationRate) / (1 + targetRate), data.noOfInstallment)) / (targetRate - inflationRate)) - data.lumpsum;
     var innerFraction = innerNumerator / data.monthly;
     var innerFraction2 = (1 / targetRate);
     var logterm = 1 / (targetRate * (innerFraction2 - innerFraction));
@@ -1097,7 +1125,6 @@ module.exports = {
     }
   },
   FV: function(rate, nper, pmt, pv, type) {
-    console.log(rate + " " + nper + " " + pmt + " " + pv + " " + type + " ");
     if (!type) type = 0;
 
     var pow = Math.pow(1 + rate, nper);
