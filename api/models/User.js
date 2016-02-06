@@ -349,7 +349,7 @@ module.exports = {
     return Math.round(result);
     // PV
     // var letstrythis = User.PV
-  }
+  },
   suggestMonthly: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var fv = 0;
     _.each(cashflow, function(key) {
@@ -370,10 +370,22 @@ module.exports = {
     return Math.round(result);
   },
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    // var denominator = Math.log
+    var innerFraction1=Math.pow(1+targetRate,data.noOfMonth);
+    var innerFraction2=(1+Math.pow(((1+inflationRate)/(1+targetRate)),data.noOfInstallment))/(targetRate-inflationRate);
+    var denominator = User.FV(targetRate,data.noOfMonth,-data.monthly,-data.lumpsum,0);
+    var numerator = innerFraction1*datal.installment*(1+targetRate)*innerFraction2;
+    var logterm=numerator/denominator;
+    var logresult = Math.log(logterm)/Math.log((1+targetRate)/(1+inflationRate));
+    return Math.round(logresult,data.noOfMonth);
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    // var denominator =
+    // var denominator = Math.log()
+    var innerNumerator = (data.installment * Math.pow(1 + inflationRate, data.startMonth + 1)) * ((1 - Math.row((1 + inflationRate) / (1 + targetRate), data.noOfInstallment)) / (targetRate - inflationRate)) - data.lumpsum;
+    var innerFraction = innerNumerator / data.monthly;
+    var innerFraction2 = (1 / targetRate);
+    var logterm = 1 / (targetRate * (innerFraction2 - innerFraction));
+    var logresult = Math.log(logterm) / Math.log(1 + targetRate);
+    return Math.min(Math.round(logresult), data.startMonth);
   },
   allpath: function(data, cashflow, callback) {
     var typeno = data.type;
