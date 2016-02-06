@@ -397,7 +397,7 @@ module.exports = {
   },
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var innerFraction1=Math.pow(1+targetRate,data.noOfMonth);
-    var innerFraction2=(1+Math.pow(((1+inflationRate)/(1+targetRate)),data.noOfInstallment))/(targetRate-inflationRate);
+    var innerFraction2=(1-Math.pow(((1+inflationRate)/(1+targetRate)),data.noOfInstallment))/(targetRate-inflationRate);
     var denominator = User.FV(targetRate,data.noOfMonth,(-1)*data.monthly,(-1)*data.lumpsum,0);
     var numerator = innerFraction1*data.installment*(1+inflationRate)*innerFraction2;
     var logterm=numerator/denominator;
