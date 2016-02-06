@@ -58,7 +58,7 @@
             </form>
         </div>
 
-        <div class="col-md-6 graphsec" >
+        <div class="col-md-6 suggestions" >
             <div class="spacer" style="height: 20px;">
 
             </div>
@@ -158,6 +158,32 @@
             </tr>
         </table>
     </div>
+    <div class="col-md-6 suggestions">
+        <div class="spacer" style="height: 20px;">
+
+        </div>
+        <blockquote class="text-uppercase">
+            <p>Lumpsum Contribution : Rs.<span id="lumpsum"></span></p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Monthly Contribution : Rs.<span id="monthly"></span></p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Monthly Contribution Nos. : <span id="monthcontri"></span> months</p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Installment Present Value : Rs.<span id="installpresent"></span></p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Required Installments : <span id="requireinstalls"></span> months</p>
+        </blockquote>
+        <blockquote class="text-uppercase">
+            <p>Time to Goal Start (months) : <span id="startmonth"></span></p>
+        </blockquote>
+        <div class="spacer" style="height: 40px;">
+
+        </div>
+    </div>
     <script>
       var minimumGoal = 50;
         function addGreenRed(id, value, compare) {
@@ -239,6 +265,16 @@
 
                         $("#s" + i).html(data.short[i]);
                         $("#l" + i).html(data.long[i]);
+                    }
+                    console.log(data.suggestions);
+                    if(feasible == null || feasible == undefined || feasible.length != 1){
+                      document.getElementById("lumpsum").innerHTML = data.suggestions.lumpsum;
+                      document.getElementById("monthly").innerHTML = data.suggestions.monthly;
+                      document.getElementById("monthcontri").innerHTML = data.suggestions.noOfMonth;
+                      document.getElementById("installpresent").innerHTML = data.suggestions.installment;
+                      document.getElementById("requireinstalls").innerHTML = data.suggestions.noOfInstallment;
+                      document.getElementById("startmonth").innerHTML = data.suggestions.startMonth;
+$(".suggestions").show();
                     }
                     if(data.value){
                       document.getElementById("percent").innerHTML = data.feasible[0].short;
