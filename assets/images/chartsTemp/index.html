@@ -267,14 +267,16 @@
                         $("#l" + i).html(data.long[i]);
                     }
                     console.log(data.suggestions);
-                    if(feasible == null || feasible == undefined || feasible.length != 1){
-                      document.getElementById("lumpsum").innerHTML = data.suggestions.lumpsum;
-                      document.getElementById("monthly").innerHTML = data.suggestions.monthly;
-                      document.getElementById("monthcontri").innerHTML = data.suggestions.noOfMonth;
-                      document.getElementById("installpresent").innerHTML = data.suggestions.installment;
-                      document.getElementById("requireinstalls").innerHTML = data.suggestions.noOfInstallment;
-                      document.getElementById("startmonth").innerHTML = data.suggestions.startMonth;
-$(".suggestions").show();
+                    if(feasible == null || feasible == undefined || feasible.length != 1 ){
+                      if(data.suggestions){
+                        document.getElementById("lumpsum").innerHTML = data.suggestions.lumpsum;
+                        document.getElementById("monthly").innerHTML = data.suggestions.monthly;
+                        document.getElementById("monthcontri").innerHTML = data.suggestions.noOfMonth;
+                        document.getElementById("installpresent").innerHTML = data.suggestions.installment;
+                        document.getElementById("requireinstalls").innerHTML = data.suggestions.noOfInstallment;
+                        document.getElementById("startmonth").innerHTML = data.suggestions.startMonth;
+  $(".suggestions").show();
+                      }
                     }
                     if(data.value){
                       document.getElementById("percent").innerHTML = data.feasible[0].short;

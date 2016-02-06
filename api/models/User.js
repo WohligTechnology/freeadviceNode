@@ -304,22 +304,24 @@ module.exports = {
 
         i++;
       });
-      if (feasible.length == 0) {
+      if (feasible.length === 0) {
         targetCashflow = [];
+        if(partialFeasible.length!=0){
+          targetCashflow = _.cloneDeep(cashflow);
+          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length-1].median50[partialFeasible[partialFeasible.length-1].median50.length - 1];
 
-        targetCashflow = _.cloneDeep(cashflow);
-        targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length-1].median50[partialFeasible[partialFeasible.length-1].median50.length - 1];
+           targetXirr = User.XIRR(targetCashflow, dates) * 100;
+           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+           var suggestions ={
+             installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+             lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+             monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+             noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+             noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+             startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+           };
+        }
 
-         targetXirr = User.XIRR(targetCashflow, dates) * 100;
-         targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-         var suggestions ={
-           installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
-           lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
-           monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
-           noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
-           noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
-           startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
-         };
         callback({
           value: false,
           short: short,
