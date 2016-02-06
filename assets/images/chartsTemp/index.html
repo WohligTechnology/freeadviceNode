@@ -49,10 +49,16 @@
                 <div class="form-group">
                     <label for="Inflation">Short-Term Volatility</label>
                     <input type="number" value="10" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
+                  <p>
+                    Try greater Short-Term Volatility : <span id="suggestshort"></span>
+                  </p>
                 </div>
                 <div class="form-group">
                     <label for="StartMonth">Long-Term Volatility</label>
                     <input type="number" value="10" class="form-control" id="longterm" placeholder="Long-Term Volatility">
+                    <p>
+                      Try greater Long-Term Volatility : <span id="suggestlong"></span>
+                    </p>
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
             </form>
@@ -267,6 +273,48 @@
                         $("#l" + i).html(data.long[i]);
                     }
                     console.log(data.suggestions);
+                    var i=0;
+                                        var tempmids=[];
+                                        var tempmidl=[];
+                                        var midl=[];
+                                        var mids=[];
+                                        _.each(data.short,function (key) {
+                                          if(key>shortinput){
+                                            tempmids.push(key);
+                                            i++;
+                                            if(i>4){
+                                              mids=tempmids;
+                                            }
+                                          }else{
+                                            tempmids =[];
+                                            i=0;
+                                          }
+                                        });
+                                        if(mids.length > 4){
+                                          _.sortBy(mids,function(key){
+                                            return key;
+                                          });
+                                          document.getElementById("suggestshort").innerHTML = mids[parseInt(mids.length/2)];
+                                        }
+                                        _.each(data.long,function (key) {
+                                          if(key>longinput){
+                                            tempmidl.push(key);
+                                            i++;
+                                            if(i>4){
+                                              midl=tempmidl;
+                                            }
+                                          }else{
+                                            tempmidl =[];
+                                            i=0;
+                                          }
+                                        });
+                                        if(midl.length > 4){
+                                          _.sortBy(midl,function(key){
+                                            return key;
+                                          });
+                                          document.getElementById("suggestlong").innerHTML = midl[parseInt(midl.length/2)];
+                                        }
+
                     if(feasible == null || feasible == undefined || feasible.length != 1 ){
                       if(data.suggestions){
                         document.getElementById("lumpsum").innerHTML = data.suggestions.lumpsum;
