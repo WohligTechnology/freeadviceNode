@@ -217,6 +217,7 @@ module.exports = {
     var alltypes = [];
     var xirr = User.XIRR(cashflow, dates) * 100;
     var requiredRate = Math.pow(parseFloat(Math.abs(1 + xirr / 100)), parseFloat((1 / 12))) - 1;
+    console.log("require rate"+requiredRate);
     var inflationRate = Math.pow(parseFloat(Math.abs(1 + data.inflation / 100)), parseFloat((1 / 12))) - 1;
 
     function onReturn(resp, type) {
@@ -312,6 +313,8 @@ module.exports = {
 
            targetXirr = User.XIRR(targetCashflow, dates) * 100;
            targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+           console.log("target rate"+targetRate);
+
            var suggestions ={
              installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
              lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -343,10 +346,12 @@ module.exports = {
           targetCashflow = [];
           targetCashflow = _.cloneDeep(cashflow);
           targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length-1].median50[feasible[feasible.length-1].median50.length - 1];
-          console.log(targetCashflow);
+          
            targetXirr = User.XIRR(targetCashflow, dates) * 100;
-           console.log(targetXirr);
+           
            targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+           console.log("target rate"+targetRate);
+
            var suggestions ={
              installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
              lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -409,9 +414,7 @@ module.exports = {
     var denominator = User.FV(targetRate,data.noOfMonth,(-1)*data.monthly,(-1)*data.lumpsum,0);
     var numerator = innerFraction1*data.installment*(1+inflationRate)*innerFraction2;
     var logterm=numerator/denominator;
-    console.log(logterm);
     var logresult = Math.log(logterm)/Math.log((1+targetRate)/(1+inflationRate));
-    console.log(logresult);
     return Math.max(Math.round(logresult),data.noOfMonth);
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
@@ -535,6 +538,7 @@ module.exports = {
       _.each(res, function(n) {
         var i = n.path - 1;
         var tenure = n.tenure;
+        n.value = parseFloat(n.value);
         if (i < totalpath && tenure < cashflow.length && paths[i].pathVal > 0) {
           paths[i].values.push(n.value);
           var newPath = Math.round((paths[i].pathVal * n.value / 100) + cashflow[tenure]);

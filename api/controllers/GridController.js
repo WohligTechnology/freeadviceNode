@@ -130,8 +130,8 @@ module.exports = {
                                             bulk.insert({
                                                 tenure: ten,
                                                 path: split + i,
-                                                value: Math.floor(workbook.Sheets.Sheet1[currentColumn.trim() + i].v * 100),
-                                                type: type  
+                                                value: parseFloat(workbook.Sheets.Sheet1[currentColumn.trim() + i].v * 100).toFixed(2),
+                                                type: type
                                             });
                                             console.log((split+i)+" "+ ten);
                                             count++;
@@ -142,7 +142,7 @@ module.exports = {
                                 }
                             }
 
-                            
+
                             console.log(count);
                             db.close();
                             res.json("done");
