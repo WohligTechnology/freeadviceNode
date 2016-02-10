@@ -213,7 +213,7 @@ module.exports = {
     var alltypes = [];
     var xirr = User.XIRR(cashflow, dates) * 100;
     var requiredRate = Math.pow(parseFloat(Math.abs(1 + xirr / 100)), parseFloat((1 / 12))) - 1;
-    console.log("require rate"+requiredRate);
+    console.log("require rate" + requiredRate);
     var inflationRate = Math.pow(parseFloat(Math.abs(1 + data.inflation / 100)), parseFloat((1 / 12))) - 1;
 
     function onReturn(resp, type) {
@@ -256,8 +256,9 @@ module.exports = {
         var median99 = _.pluck(firstArr, "median99");
         var tenures = _.pluck(firstArr, "tenureNo");
         var percentage = _.pluck(firstArr, "percentage");
-        var longpercent = _.pluck(firstArr, "longvalue");
-        // console.log(longpercent);
+        var longpercent = _.pluck(firstArr, "long");
+
+        console.log(longpercent);
         percentage = percentage.slice(0, 12);
         percentage = _.sortBy(percentage, function(n) {
           return n;
@@ -265,11 +266,11 @@ module.exports = {
         // console.log(percentage);
         short[i] = percentage[0].toFixed(2);
         goals[i] = firstArr[0].goalchance.toFixed(2);
-        long[i] = longpercent[0];
+        long[i] = longpercent[longpercent.length - 1 ];
         short[i] = (100 - short[i]).toFixed(2);
         long[i] = (100 - long[i]).toFixed(2);
         console.log(long[i]);
-        if( -short[i] > -data.shortinput && -long[i] > -data.longinput){
+        if (-short[i] > -data.shortinput && -long[i] > -data.longinput) {
           partialFeasible.push({
             type: i,
             tenures: tenures,
@@ -280,7 +281,7 @@ module.exports = {
             goal: goals[i],
             long: long[i]
           });
-          if (goals[i] > 50 ) {
+          if (goals[i] > 50) {
 
             feasible.push({
               type: i,
@@ -299,22 +300,22 @@ module.exports = {
       });
       if (feasible.length === 0) {
         targetCashflow = [];
-        if(partialFeasible.length!=0){
+        if (partialFeasible.length !== 0) {
           targetCashflow = _.cloneDeep(cashflow);
-          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length-1].median50[partialFeasible[partialFeasible.length-1].median50.length - 1];
+          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[partialFeasible[partialFeasible.length - 1].median50.length - 1];
 
-           targetXirr = User.XIRR(targetCashflow, dates) * 100;
-           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-           console.log("target rate"+targetRate);
+          targetXirr = User.XIRR(targetCashflow, dates) * 100;
+          targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+          console.log("target rate" + targetRate);
 
-           var suggestions ={
-             installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
-             lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
-             monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
-             noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
-             noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
-             startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
-           };
+          var suggestions = {
+            installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+            lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+            monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+            startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+          };
         }
 
         callback({
@@ -322,10 +323,10 @@ module.exports = {
           short: short,
           goals: goals,
           long: long,
-          suggestions:suggestions
+          suggestions: suggestions
         });
       } else {
-        if(feasible.length==1){
+        if (feasible.length == 1) {
           callback({
             value: true,
             short: short,
@@ -334,23 +335,23 @@ module.exports = {
             feasible: feasible,
             cashflow: cashflow
           });
-        }else{
+        } else {
           targetCashflow = [];
           targetCashflow = _.cloneDeep(cashflow);
-          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length-1].median50[feasible[feasible.length-1].median50.length - 1];
+          targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length - 1].median50[feasible[feasible.length - 1].median50.length - 1];
 
-           targetXirr = User.XIRR(targetCashflow, dates) * 100;
+          targetXirr = User.XIRR(targetCashflow, dates) * 100;
 
-           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-           console.log("target rate"+targetRate);
-           var suggestions ={
-             installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
-             lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
-             monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
-             noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
-             noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
-             startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
-           };
+          targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
+          console.log("target rate" + targetRate);
+          var suggestions = {
+            installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+            lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+            monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+            startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+          };
           callback({
             value: true,
             short: short,
@@ -358,14 +359,14 @@ module.exports = {
             long: long,
             feasible: feasible,
             cashflow: cashflow,
-            suggestions:suggestions
+            suggestions: suggestions
           });
         }
       }
     }
   },
   suggestInstallment: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0)
+    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
     var futureVal = User.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0);
     var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment));
     var installmentDenominator = Math.pow((1 + inflationRate), (data.startMonth + 1));
@@ -400,13 +401,13 @@ module.exports = {
     return Math.round(result);
   },
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    var innerFraction1=Math.pow(1+targetRate,data.noOfMonth);
-    var innerFraction2=(1-Math.pow(((1+inflationRate)/(1+targetRate)),data.noOfInstallment))/(targetRate-inflationRate);
-    var denominator = User.FV(targetRate,data.noOfMonth,(-1)*data.monthly,(-1)*data.lumpsum,0);
-    var numerator = innerFraction1*data.installment*(1+inflationRate)*innerFraction2;
-    var logterm=numerator/denominator;
-    var logresult = Math.log(logterm)/Math.log((1+targetRate)/(1+inflationRate));
-    return Math.max(Math.round(logresult),data.noOfMonth);
+    var innerFraction1 = Math.pow(1 + targetRate, data.noOfMonth);
+    var innerFraction2 = (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment)) / (targetRate - inflationRate);
+    var denominator = User.FV(targetRate, data.noOfMonth, (-1) * data.monthly, (-1) * data.lumpsum, 0);
+    var numerator = innerFraction1 * data.installment * (1 + inflationRate) * innerFraction2;
+    var logterm = numerator / denominator;
+    var logresult = Math.log(logterm) / Math.log((1 + targetRate) / (1 + inflationRate));
+    return Math.max(Math.round(logresult), data.noOfMonth);
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     // var denominator = Math.log()
@@ -419,7 +420,7 @@ module.exports = {
   },
   allpath: function(data, cashflow, callback) {
     var typeno = data.type;
-    if (data.type == 0) {
+    if (data.type === 0) {
       data.type = "";
     }
     data.type = data.type + "0%";
@@ -484,7 +485,7 @@ module.exports = {
           for (var i = 0; i < cashflow.length; i++) {
             var key = resp[i];
             pathPercent[key.tenure - 1] = key.value;
-          };
+          }
           var totalAmountPaid = data.lumpsum + (data.monthly * data.noOfMonth);
           tempoutput = User.computePathData(pathPercent, cashflow, data.startMonth, totalAmountPaid);
           callback(tempoutput);
@@ -502,17 +503,17 @@ module.exports = {
     var pathvalgrid = [];
     var goalcount = 0;
     var pathtemp = [];
-    var longvalue=[];
+    var longvalue = [];
     _.each(cashflow, function() {
       pathvalgrid.push([]);
     });
 
-    if (data.type == 0) {
+    if (data.type === 0) {
       data.type = "";
     }
     data.type = data.type + "0%";
     if (!cashflow) {
-      var cashflow = [];
+      cashflow = [];
       User.generateCashflow(data, cashflow);
     }
     var totalpath = 950;
@@ -536,29 +537,26 @@ module.exports = {
           paths[i].values.push(n.value);
           var newPath = Math.round((paths[i].pathVal * n.value / 100) + cashflow[tenure]);
 
-          if (newPath > 0 ) {
-            pathvalgrid[tenure][i] = newPath;
-            if (tenure == 12) {
-              paths[i].short = newPath;
-            }
-            paths[i].pathVal = newPath;
 
-            if(tenure == (cashflow.length -1) ) {
-              longvalue[i]=User.calcLongValue(cashflow,tenure,newPath);
-            }
+
+          pathvalgrid[tenure][i] = newPath;
+          if (tenure == 12) {
+            paths[i].short = newPath;
+          }
+          paths[i].pathVal = newPath;
+
+          if (newPath < 0 && pathvalgrid[tenure-1][i] > 0) {
+
+            ++goalcount;
 
           } else {
-            paths[i].goalChange = 1;
-            ++goalcount;
-            //paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
-            longvalue[i]=User.calcLongValue(cashflow,tenure,paths[i].pathVal);
-            paths[i].pathVal = 0;
-            for (j = tenure; j < cashflow.length; j++) {
-              pathvalgrid[j][i] = 0;
-            }
-            // pathvalgrid[tenure][i] = newPath;
-          }
 
+
+            // paths[i].pathVal = 0;
+            // for (j = tenure; j < cashflow.length; j++) {
+            //   pathvalgrid[j][i] = 0;
+            // }
+          }
           paths[i].pathValArr.push(paths[i].pathVal);
         }
       });
@@ -570,15 +568,20 @@ module.exports = {
       var med50key = Math.ceil((totalpath - 1) / 2);
       var med99key = Math.ceil(99 * (totalpath - 1) / 100);
       var foundLast = false;
-      longvalue = _.sortBy(longvalue, function(key) {
-        return key;
-      });
+
+
 
       for (var i = 0; i < cashflow.length; i++) {
         pathvaltemp = pathvalgrid[i];
         pathvaltemp = _.sortBy(pathvaltemp, function(key) {
           return key;
         });
+        var long = 0;
+        if(cashflow.length-1 == i)
+        {
+          long = User.calcLongValue(cashflow, cashflow.length, pathvaltemp[med1key]);
+        }
+
         tenure.push({
           tenureNo: i,
           median1: pathvaltemp[med1key],
@@ -586,8 +589,9 @@ module.exports = {
           median99: pathvaltemp[med99key],
           pathlength: pathvaltemp.length,
           goalchance: 100 - ((goalcount / totalpath) * 100),
-          longvalue:longvalue[med10key]
+          long: long
         });
+
         if (i === 0) {
           tenure[i].percentage = User.calcLongValue(cashflow, i + 1, cashflow[0]);
           tenure[i].ith = i + 1;
@@ -620,13 +624,14 @@ module.exports = {
       }
       callback(tenure, typeno);
     });
-
-
-
   },
-
   calcLongValue: function(cashflow, currentmonth, lastamount) {
+
+
     var cashflowtill = cashflow.slice(0, currentmonth);
+    // console.log(cashflowtill);
+    // console.log(lastamount);
+
     var posValue = 0;
     _.each(cashflowtill, function(n) {
       if (n > 0) {
@@ -640,7 +645,7 @@ module.exports = {
         negValue += n;
       }
     });
-
+    // console.log(((negValue * -1) + lastamount) / posValue * 100);
     return ((negValue * -1) + lastamount) / posValue * 100;
   },
 
@@ -652,7 +657,7 @@ module.exports = {
       var value = tmp.Flow;
       var date = new Date(tmp.Date);
       xnpv += value / Math.pow(1 + rate, this.DaysBetween(firstDate, date) / 365);
-    };
+    }
     return xnpv;
   },
   XIRR: function(values, dates, guess) {
@@ -717,7 +722,7 @@ module.exports = {
     // Return internal rate of return
     return resultRate;
   },
-computePathData: function(path, cash, startMonth, totalAmountPaid) {
+  computePathData: function(path, cash, startMonth, totalAmountPaid) {
     var pathval;
     var pathvalarr = [];
     pathval = cash[0];
