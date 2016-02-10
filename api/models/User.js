@@ -198,9 +198,6 @@ module.exports = {
 
   },
   alltypes2: function(data, callback) {
-
-
-
     var cashflow = [];
     var targetCashflow = [];
     var dates = [];
@@ -208,7 +205,6 @@ module.exports = {
     var month;
     month = new Date();
     for (var i = 0; i < cashflow.length; i++) {
-
       var temp = month.setMonth(month.getMonth() + 1);
       dates.push(temp);
     }
@@ -260,8 +256,8 @@ module.exports = {
         var median99 = _.pluck(firstArr, "median99");
         var tenures = _.pluck(firstArr, "tenureNo");
         var percentage = _.pluck(firstArr, "percentage");
-        var longpercent = _.pluck(firstArr, "longpercent");
-
+        var longpercent = _.pluck(firstArr, "longvalue");
+        // console.log(longpercent);
         percentage = percentage.slice(0, 12);
         percentage = _.sortBy(percentage, function(n) {
           return n;
@@ -269,14 +265,10 @@ module.exports = {
         // console.log(percentage);
         short[i] = percentage[0].toFixed(2);
         goals[i] = firstArr[0].goalchance.toFixed(2);
-        long[i] = _.find(longpercent, function(o) {
-          return o != 100;
-        });
-        if (long[i] == undefined || long[i] == null) {
-          long[i] = 100;
-        }
+        long[i] = longpercent[0];
         short[i] = (100 - short[i]).toFixed(2);
         long[i] = (100 - long[i]).toFixed(2);
+        console.log(long[i]);
         if( -short[i] > -data.shortinput && -long[i] > -data.longinput){
           partialFeasible.push({
             type: i,
@@ -346,12 +338,11 @@ module.exports = {
           targetCashflow = [];
           targetCashflow = _.cloneDeep(cashflow);
           targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length-1].median50[feasible[feasible.length-1].median50.length - 1];
-          
+
            targetXirr = User.XIRR(targetCashflow, dates) * 100;
-           
+
            targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
            console.log("target rate"+targetRate);
-
            var suggestions ={
              installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
              lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -511,6 +502,7 @@ module.exports = {
     var pathvalgrid = [];
     var goalcount = 0;
     var pathtemp = [];
+    var longvalue=[];
     _.each(cashflow, function() {
       pathvalgrid.push([]);
     });
@@ -535,6 +527,7 @@ module.exports = {
       };
     }
     Grid.findGridByType(data, function(res, err) {
+
       _.each(res, function(n) {
         var i = n.path - 1;
         var tenure = n.tenure;
@@ -543,44 +536,57 @@ module.exports = {
           paths[i].values.push(n.value);
           var newPath = Math.round((paths[i].pathVal * n.value / 100) + cashflow[tenure]);
 
-          if (newPath > 0) {
+          if (newPath > 0 ) {
             pathvalgrid[tenure][i] = newPath;
             if (tenure == 12) {
               paths[i].short = newPath;
             }
             paths[i].pathVal = newPath;
+
+            if(tenure == (cashflow.length -1) ) {
+              longvalue[i]=User.calcLongValue(cashflow,tenure,newPath);
+            }
+
           } else {
             paths[i].goalChange = 1;
             ++goalcount;
-            paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
+            //paths[i].long = User.calcLongValue(cashflow, tenure, paths[i].pathVal);
+            longvalue[i]=User.calcLongValue(cashflow,tenure,paths[i].pathVal);
             paths[i].pathVal = 0;
             for (j = tenure; j < cashflow.length; j++) {
               pathvalgrid[j][i] = 0;
             }
             // pathvalgrid[tenure][i] = newPath;
           }
+
           paths[i].pathValArr.push(paths[i].pathVal);
         }
       });
+
       var tenure = [];
       var pathvaltemp = [];
       var med1key = Math.ceil((totalpath - 1) / 100);
+      var med10key = Math.ceil((totalpath - 1) / 10);
       var med50key = Math.ceil((totalpath - 1) / 2);
       var med99key = Math.ceil(99 * (totalpath - 1) / 100);
       var foundLast = false;
+      longvalue = _.sortBy(longvalue, function(key) {
+        return key;
+      });
+
       for (var i = 0; i < cashflow.length; i++) {
         pathvaltemp = pathvalgrid[i];
         pathvaltemp = _.sortBy(pathvaltemp, function(key) {
           return key;
         });
-
         tenure.push({
           tenureNo: i,
           median1: pathvaltemp[med1key],
           median50: pathvaltemp[med50key],
           median99: pathvaltemp[med99key],
           pathlength: pathvaltemp.length,
-          goalchance: 100 - ((goalcount / totalpath) * 100)
+          goalchance: 100 - ((goalcount / totalpath) * 100),
+          longvalue:longvalue[med10key]
         });
         if (i === 0) {
           tenure[i].percentage = User.calcLongValue(cashflow, i + 1, cashflow[0]);
@@ -618,6 +624,26 @@ module.exports = {
 
 
   },
+
+  calcLongValue: function(cashflow, currentmonth, lastamount) {
+    var cashflowtill = cashflow.slice(0, currentmonth);
+    var posValue = 0;
+    _.each(cashflowtill, function(n) {
+      if (n > 0) {
+        posValue += n;
+      }
+    });
+
+    var negValue = 0;
+    _.each(cashflowtill, function(n) {
+      if (n < 0) {
+        negValue += n;
+      }
+    });
+
+    return ((negValue * -1) + lastamount) / posValue * 100;
+  },
+
   XNPV: function(rate, values) {
     var xnpv = 0.0;
     var firstDate = new Date(values[0].Date);
@@ -691,25 +717,7 @@ module.exports = {
     // Return internal rate of return
     return resultRate;
   },
-  calcLongValue: function(cashflow, currentmonth, lastamount) {
-    var cashflowtill = cashflow.slice(0, currentmonth);
-    var posValue = 0;
-    _.each(cashflowtill, function(n) {
-      if (n > 0) {
-        posValue += n;
-      }
-    });
-
-    var negValue = 0;
-    _.each(cashflowtill, function(n) {
-      if (n < 0) {
-        negValue += n;
-      }
-    });
-
-    return ((negValue * -1) + lastamount) / posValue * 100;
-  },
-  computePathData: function(path, cash, startMonth, totalAmountPaid) {
+computePathData: function(path, cash, startMonth, totalAmountPaid) {
     var pathval;
     var pathvalarr = [];
     pathval = cash[0];
