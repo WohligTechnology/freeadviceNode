@@ -2,8 +2,34 @@ function createGraph(tenure, median1, median50, median99,type,cashflow) {
   median1.unshift(cashflow[0]);
   median50.unshift(cashflow[0]);
   median99.unshift(cashflow[0]);
+  // median1 = _.map(median1,function(key){
+  //   if(key<0)
+  //   {
+  //     return 0;
+  //   }
+  //   else {
+  //     return key;
+  //   }
+  // });
+  // median50 = _.map(median50,function(key){
+  //   if(key<0)
+  //   {
+  //     return 0;
+  //   }
+  //   else {
+  //     return key;
+  //   }
+  // });
+  // median99 = _.map(median99,function(key){
+  //   if(key<0)
+  //   {
+  //     return 0;
+  //   }
+  //   else {
+  //     return key;
+  //   }
+  // });
   console.log(median1);
-  console.log(median50);
     $('#container').highcharts({
         credits: {
             enabled: false

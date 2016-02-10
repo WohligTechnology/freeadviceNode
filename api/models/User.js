@@ -182,7 +182,7 @@ module.exports = {
       }
     }
 
-    for (var i = 0; i <= 10; i++) {
+    for (var i = 0; i <= 0; i++) {
       data.type = i;
       var data1 = _.clone(data, true);
       User.allpath(data1, cashflow, onReturn);
@@ -533,8 +533,12 @@ module.exports = {
         var i = n.path - 1;
         var tenure = n.tenure;
         n.value = parseFloat(n.value);
-        if (i < totalpath && tenure < cashflow.length && paths[i].pathVal > 0) {
+        if (i < totalpath && tenure < cashflow.length) {
           paths[i].values.push(n.value);
+          if(pathvalgrid[tenure-1][i] < 0)
+          {
+            n.value  = 100;
+          }
           var newPath = Math.round((paths[i].pathVal * n.value / 100) + cashflow[tenure]);
 
 
@@ -564,7 +568,7 @@ module.exports = {
       var tenure = [];
       var pathvaltemp = [];
       var med1key = Math.ceil((totalpath - 1) / 100);
-      var med10key = Math.ceil((totalpath - 1) / 10);
+      // var med10key = Math.ceil((totalpath - 1) / 10);
       var med50key = Math.ceil((totalpath - 1) / 2);
       var med99key = Math.ceil(99 * (totalpath - 1) / 100);
       var foundLast = false;
@@ -577,9 +581,10 @@ module.exports = {
           return key;
         });
         var long = 0;
-        if(cashflow.length-1 == i)
+        if(cashflow.length - 1 == i)
         {
           long = User.calcLongValue(cashflow, cashflow.length, pathvaltemp[med1key]);
+          console.log(long);
         }
 
         tenure.push({
@@ -629,8 +634,8 @@ module.exports = {
 
 
     var cashflowtill = cashflow.slice(0, currentmonth);
-    // console.log(cashflowtill);
-    // console.log(lastamount);
+    console.log(cashflowtill);
+    console.log(lastamount);
 
     var posValue = 0;
     _.each(cashflowtill, function(n) {
@@ -645,7 +650,7 @@ module.exports = {
         negValue += n;
       }
     });
-    // console.log(((negValue * -1) + lastamount) / posValue * 100);
+    console.log(((negValue * -1) + lastamount) / posValue * 100);
     return ((negValue * -1) + lastamount) / posValue * 100;
   },
 
@@ -671,7 +676,7 @@ module.exports = {
         result += values[i] / Math.pow(r, moment(dates[i]).diff(moment(dates[0]), 'days') / 365);
       }
       return result;
-    }
+    };
 
     // Calculates the first derivation
     var irrResultDeriv = function(values, dates, rate) {
