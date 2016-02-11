@@ -301,10 +301,29 @@ module.exports = {
                 if (partialFeasible.length !== 0) {
                     targetCashflow = _.cloneDeep(cashflow);
                     targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[cashflow.length - 1];
-
+                    partialFeasible[partialFeasible.length - 1].median50.unshift(cashflow[0]);
+                    var i=0;var num1=0;
+                    var num2=0;
+                    _.each(targetCashflow,function(key){
+                        num1=0;
+                        num2=0;
+                        if(key<0){
+                            num1=Math.max(0,Math.min(partialFeasible[partialFeasible.length - 1].median50[i]-key,-key));
+                        }else{
+                       num1=-key;  
+                        }
+                        if(i== cashflow.length-1){
+                            if(partialFeasible[partialFeasible.length - 1].median50[i] >0){
+                                num2=partialFeasible[partialFeasible.length - 1].median50[i];
+                            }else{
+                                num2=0
+                            }
+                        }
+                        key=num1+num2;
+                    })
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-                    targetRate = 0.0029;
+//                    targetRate = 0.0029;
                     console.log("target rate" + targetRate);
 
                     var suggestions = {
@@ -338,11 +357,30 @@ module.exports = {
                     targetCashflow = [];
                     targetCashflow = _.cloneDeep(cashflow);
                     targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length - 1].median50[feasible[feasible.length - 1].median50.length - 1];
-
+                    feasible[feasible.length - 1].median50.unshift(cashflow[0]);
+                    var i=0;var num1=0;
+                    var num2=0;
+                    _.each(targetCashflow,function(key){
+                        num1=0;
+                        num2=0;
+                        if(key<0){
+                            num1=Math.max(0,Math.min(feasible[feasible.length - 1].median50[i]-key,-key));
+                        }else{
+                       num1=-key;  
+                        }
+                        if(i== cashflow.length-1){
+                            if(feasible[feasible.length - 1].median50[i] >0){
+                                num2=feasible[feasible.length - 1].median50[i];
+                            }else{
+                                num2=0
+                            }
+                        }
+                        key=num1+num2;
+                    })
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
 
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
-                    targetRate = 0.0029;
+//                    targetRate = 0.0029;
                     console.log("target rate" + targetRate);
                     var suggestions = {
                         installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
