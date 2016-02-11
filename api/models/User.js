@@ -300,11 +300,11 @@ module.exports = {
                 targetCashflow = [];
                 if (partialFeasible.length !== 0) {
                     targetCashflow = _.cloneDeep(cashflow);
-                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[cashflow.length - 1];
+//                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[cashflow.length - 1];
                     partialFeasible[partialFeasible.length - 1].median50.unshift(cashflow[0]);
                     var i=0;var num1=0;
                     var num2=0;
-                    _.each(targetCashflow,function(key){
+                    targetCashflow=_.map(targetCashflow,function(key){
                         num1=0;
                         num2=0;
                         if(key<0){
@@ -314,13 +314,16 @@ module.exports = {
                         }
                         if(i== cashflow.length-1){
                             if(partialFeasible[partialFeasible.length - 1].median50[i] >0){
+                                console.log("median : "+partialFeasible[partialFeasible.length - 1].median50[i]);
                                 num2=partialFeasible[partialFeasible.length - 1].median50[i];
                             }else{
                                 num2=0
                             }
                         }
-                        key=num1+num2;
+                        i++;
+                        return num1+num2;
                     })
+                    console.log(targetCashflow);
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
 //                    targetRate = 0.0029;
@@ -356,27 +359,35 @@ module.exports = {
                 } else {
                     targetCashflow = [];
                     targetCashflow = _.cloneDeep(cashflow);
-                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length - 1].median50[feasible[feasible.length - 1].median50.length - 1];
+//                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length - 1].median50[feasible[feasible.length - 1].median50.length - 1];
                     feasible[feasible.length - 1].median50.unshift(cashflow[0]);
                     var i=0;var num1=0;
                     var num2=0;
-                    _.each(targetCashflow,function(key){
+                    targetCashflow=_.map(targetCashflow,function(key){
                         num1=0;
                         num2=0;
                         if(key<0){
+                            console.log(key);
                             num1=Math.max(0,Math.min(feasible[feasible.length - 1].median50[i]-key,-key));
                         }else{
                        num1=-key;  
                         }
                         if(i== cashflow.length-1){
+                            console.log("i : "+i);
                             if(feasible[feasible.length - 1].median50[i] >0){
+                                                                console.log("median : "+feasible[feasible.length - 1].median50[i]);
+
                                 num2=feasible[feasible.length - 1].median50[i];
                             }else{
                                 num2=0
                             }
                         }
-                        key=num1+num2;
+                        i++;
+                        console.log(num1+" "+ num2);
+                        console.log(num1+num2);
+                        return num1+num2;
                     })
+                    console.log(targetCashflow);
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
 
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
