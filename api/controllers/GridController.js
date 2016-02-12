@@ -5,7 +5,14 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+
+
+
 module.exports = {
+    checkthis: function(req,res) {
+      console.log("Done");
+      res.json({name:"Chintan"});
+    },
     excelobject: function (req, res) {
         sails.query(function (err, db) {
             if (err) {
@@ -260,24 +267,26 @@ module.exports = {
         }
     },
     findGridByType: function (req, res) {
-        if (req.body) {
-            if (req.body.type && req.body.type != "") {
-                var print = function (data) {
-                    res.json(data);
-                }
-                Grid.findGridByType(req.body, print);
-            } else {
-                res.json({
-                    value: false,
-                    comment: "Grid-id is incorrect"
-                });
-            }
-        } else {
-            res.json({
-                value: false,
-                comment: "Please provide parameters"
-            });
-        }
+      console.log(req.query);
+      var print = function (data) {
+          res.json(data);
+      };
+      Grid.findGridByType({type:req.query.id}, print);
+      //   if (req.body) {
+      //       if (req.body.type && req.body.type !== "") {
+      //
+      //       } else {
+      //           res.json({
+      //               value: false,
+      //               comment: "Grid-id is incorrect"
+      //           });
+      //       }
+      //   } else {
+      //       res.json({
+      //           value: false,
+      //           comment: "Please provide parameters"
+      //       });
+      //   }
     },
     findlimited: function (req, res) {
         if (req.body) {
