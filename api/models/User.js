@@ -213,7 +213,7 @@ module.exports = {
         var alltypes = [];
         var xirr = User.XIRR(cashflow, dates) * 100;
         var requiredRate = Math.pow(parseFloat(Math.abs(1 + xirr / 100)), parseFloat((1 / 12))) - 1;
-        console.log("require rate" + requiredRate);
+
         var inflationRate = Math.pow(parseFloat(Math.abs(1 + data.inflation / 100)), parseFloat((1 / 12))) - 1;
 
         function onReturn(resp, type) {
@@ -264,7 +264,7 @@ module.exports = {
                 });
                 // console.log(percentage);
                 short[i] = percentage[0].toFixed(2);
-                goals[i] = firstArr[0].goalchance.toFixed(2);
+                goals[i] = firstArr[longpercent.length - 1].goalchance.toFixed(2);
                 long[i] = longpercent[longpercent.length - 1];
                 short[i] = (100 - short[i]).toFixed(2);
                 long[i] = (100 - long[i]).toFixed(2);
@@ -302,7 +302,8 @@ module.exports = {
                     targetCashflow = _.cloneDeep(cashflow);
 //                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[cashflow.length - 1];
                     partialFeasible[partialFeasible.length - 1].median50.unshift(cashflow[0]);
-                    var i=0;var num1=0;
+                    var i=0;
+                    var num1=0;
                     var num2=0;
                     targetCashflow=_.map(targetCashflow,function(key){
                         num1=0;
@@ -310,11 +311,10 @@ module.exports = {
                         if(key<0){
                             num1=Math.max(0,Math.min(partialFeasible[partialFeasible.length - 1].median50[i]-key,-key));
                         }else{
-                       num1=-key;  
+                       num1=-key;
                         }
                         if(i== cashflow.length-1){
                             if(partialFeasible[partialFeasible.length - 1].median50[i] >0){
-                                console.log("median : "+partialFeasible[partialFeasible.length - 1].median50[i]);
                                 num2=partialFeasible[partialFeasible.length - 1].median50[i];
                             }else{
                                 num2=0
@@ -323,11 +323,9 @@ module.exports = {
                         i++;
                         return num1+num2;
                     })
-                    console.log(targetCashflow);
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
 //                    targetRate = 0.0029;
-                    console.log("target rate" + targetRate);
 
                     var suggestions = {
                         installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -367,13 +365,11 @@ module.exports = {
                         num1=0;
                         num2=0;
                         if(key<0){
-                            console.log(key);
                             num1=Math.max(0,Math.min(feasible[feasible.length - 1].median50[i]-key,-key));
                         }else{
-                       num1=-key;  
+                       num1=-key;
                         }
                         if(i== cashflow.length-1){
-                            console.log("i : "+i);
                             if(feasible[feasible.length - 1].median50[i] >0){
                                                                 console.log("median : "+feasible[feasible.length - 1].median50[i]);
 
@@ -383,16 +379,14 @@ module.exports = {
                             }
                         }
                         i++;
-                        console.log(num1+" "+ num2);
-                        console.log(num1+num2);
                         return num1+num2;
                     })
-                    console.log(targetCashflow);
+
                     targetXirr = User.XIRR(targetCashflow, dates) * 100;
 
                     targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
 //                    targetRate = 0.0029;
-                    console.log("target rate" + targetRate);
+
                     var suggestions = {
                         installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
                         lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -596,26 +590,12 @@ module.exports = {
                     }
                     var newPath = Math.round((paths[i].pathVal * n.value / 100) + cashflow[tenure]);
 
-
-
                     pathvalgrid[tenure][i] = newPath;
                     if (tenure == 12) {
                         paths[i].short = newPath;
                     }
                     paths[i].pathVal = newPath;
 
-                    if (newPath < 0 && pathvalgrid[tenure - 1][i] > 0) {
-
-                        ++goalcount;
-
-                    } else {
-
-
-                        // paths[i].pathVal = 0;
-                        // for (j = tenure; j < cashflow.length; j++) {
-                        //   pathvalgrid[j][i] = 0;
-                        // }
-                    }
                     paths[i].pathValArr.push(paths[i].pathVal);
                 }
             });
@@ -638,15 +618,17 @@ module.exports = {
                 var long = 0;
                 if (cashflow.length - 1 == i) {
                     long = User.calcLongValue(cashflow, cashflow.length, pathvaltemp[med1key]);
+                    goalcount = _.filter(pathvaltemp, function(n) {
+                      return n > 0;
+                    }).length;
                 }
-
                 tenure.push({
                     tenureNo: i,
                     median1: pathvaltemp[med1key],
                     median50: pathvaltemp[med50key],
                     median99: pathvaltemp[med99key],
                     pathlength: pathvaltemp.length,
-                    goalchance: 100 - ((goalcount / totalpath) * 100),
+                    goalchance: (goalcount / totalpath) * 100,
                     long: long
                 });
 
