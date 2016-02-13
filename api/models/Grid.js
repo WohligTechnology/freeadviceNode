@@ -62,7 +62,7 @@ module.exports = {
         } else {
           //                    console.log("in else");
           var grid = sails.ObjectID(data._id);
-          delete data._id
+          delete data._id;
           db.collection('grid').update({
             _id: grid
           }, {
@@ -75,12 +75,12 @@ module.exports = {
                 comment: "Error"
               });
               db.close();
-            } else if (updated.result.nModified != 0 && updated.result.n != 0) {
+            } else if (updated.result.nModified !== 0 && updated.result.n !== 0) {
               callback({
                 value: true
               });
               db.close();
-            } else if (updated.result.nModified == 0 && updated.result.n != 0) {
+            } else if (updated.result.nModified === 0 && updated.result.n !== 0) {
               callback({
                 value: true,
                 comment: "Data already updated"
@@ -180,7 +180,7 @@ module.exports = {
       value: Math.floor(Grid.generateRandom(type[data.type].max, type[data.type].min)),
       type: type[data.type].name
     };
-    if (data.tenure == 1 && data.path == 1 && data.type == 0) {
+    if (data.tenure === 1 && data.path === 1 && data.type === 0) {
       Grid.save(grid, function(resp) {
         if (resp.value) {
           callback({
@@ -320,7 +320,7 @@ module.exports = {
               '$regex': check
             }
           }, function(err, number) {
-            if (number && number != "") {
+            if (number && number !== "") {
               newreturns.total = number;
               newreturns.totalpages = Math.ceil(number / data.pagesize);
               callbackfunc();
