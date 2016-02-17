@@ -475,7 +475,6 @@ module.exports = {
     });
   },
   findGridByType: function(data, callback) {
-    console.log(data);
     ch = data.type;
     var res;
     switch (ch) {
@@ -516,7 +515,7 @@ module.exports = {
           res = type0;
           break;
     }
-    console.log(res.length);
+
     callback(res);
   },
   delete: function(data, callback) {
