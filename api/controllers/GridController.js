@@ -272,21 +272,6 @@ module.exports = {
           res.json(data);
       };
       Grid.findGridByType({type:req.query.id}, print);
-      //   if (req.body) {
-      //       if (req.body.type && req.body.type !== "") {
-      //
-      //       } else {
-      //           res.json({
-      //               value: false,
-      //               comment: "Grid-id is incorrect"
-      //           });
-      //       }
-      //   } else {
-      //       res.json({
-      //           value: false,
-      //           comment: "Please provide parameters"
-      //       });
-      //   }
     },
     findGridByType2: function (req, res) {
                 var print = function (data) {
