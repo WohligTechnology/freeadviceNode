@@ -107,7 +107,7 @@ module.exports = {
         });
       }
       if (db) {
-        db.collection("grid").find().toArray(function(err, found) {
+        db.collection("grid").find().limit(10000000000).toArray(function(err, found) {
           if (err) {
             callback({
               value: false
@@ -453,7 +453,7 @@ module.exports = {
 
         db.collection("grid").find({
           type: data.type
-        }).limit(95000).toArray(function(err, data2) {
+        }).toArray(function(err, data2) {
           if (err) {
             console.log(err);
             callback({

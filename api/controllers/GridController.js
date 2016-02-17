@@ -288,6 +288,13 @@ module.exports = {
       //       });
       //   }
     },
+    findGridByType2: function (req, res) {
+                var print = function (data) {
+                    res.json(data);
+                };
+                Grid.findGridByType2({type:req.query.id}, print);
+
+      },
     findlimited: function (req, res) {
         if (req.body) {
             if (req.body.pagesize && req.body.pagesize != "" && req.body.pagenumber && req.body.pagenumber != "") {
