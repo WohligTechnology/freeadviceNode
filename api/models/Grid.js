@@ -6,15 +6,15 @@
  */
 var type0 = require('../../findGridByType0.json');
 var type10 = require('../../findGridByType10.json');
-// var type20 = require('../../findGridByType20.json');
-// var type30 = require('../../findGridByType30.json');
-// var type40 = require('../../findGridByType40.json');
-// var type50 = require('../../findGridByType50.json');
-// var type60 = require('../../findGridByType60.json');
-// var type70 = require('../../findGridByType70.json');
-// var type80 = require('../../findGridByType80.json');
-// var type90 = require('../../findGridByType90.json');
-// var type100 = require('../../findGridByType100.json');
+var type20 = require('../../findGridByType20.json');
+var type30 = require('../../findGridByType30.json');
+var type40 = require('../../findGridByType40.json');
+var type50 = require('../../findGridByType50.json');
+var type60 = require('../../findGridByType60.json');
+var type70 = require('../../findGridByType70.json');
+var type80 = require('../../findGridByType80.json');
+var type90 = require('../../findGridByType90.json');
+var type100 = require('../../findGridByType100.json');
 
 
 
@@ -485,33 +485,33 @@ module.exports = {
       case "10%":
         res = type10;
         break;
-      // case "20%":
-      //   res = type20;
-      //   break;
-      // case "30%":
-      //   res = type30;
-      //   break;
-      // case "40%":
-      //   res = type40;
-      //   break;
-      // case "50%":
-      //   res = type50;
-      //   break;
-      // case "60%":
-      //   res = type60;
-      //   break;
-      // case "70%":
-      //   res = type70;
-      //   break;
-      // case "80%":
-      //   res = type80;
-      //   break;
-      // case "90%":
-      //   res = type90;
-      //   break;
-      // case "100%":
-      //   res = type100;
-      //   break;
+      case "20%":
+        res = type20;
+        break;
+      case "30%":
+        res = type30;
+        break;
+      case "40%":
+        res = type40;
+        break;
+      case "50%":
+        res = type50;
+        break;
+      case "60%":
+        res = type60;
+        break;
+      case "70%":
+        res = type70;
+        break;
+      case "80%":
+        res = type80;
+        break;
+      case "90%":
+        res = type90;
+        break;
+      case "100%":
+        res = type100;
+        break;
       default:
           res = type0;
           break;
