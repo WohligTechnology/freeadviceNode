@@ -2,6 +2,11 @@ function createGraph(tenure, median1, median50, median99,type,cashflow) {
   median1.unshift(cashflow[0]);
   median50.unshift(cashflow[0]);
   median99.unshift(cashflow[0]);
+  console.log("data here");
+  console.log(median1);
+  console.log(median50);
+  console.log(median99);
+  console.log(cashflow);
   median1 = _.map(median1,function(key){
     if(key<0)
     {
